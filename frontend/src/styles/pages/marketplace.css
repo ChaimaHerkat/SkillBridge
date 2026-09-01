@@ -1,0 +1,48 @@
+/* Marketplace Page */
+.marketplace {
+  padding: 2rem;
+}
+
+.marketplace h1 {
+  color: #2d3436;
+  margin-bottom: 2rem;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.projects-grid .project-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.projects-grid .project-card:hover {
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+  transform: translateY(-5px);
+}
+
+.projects-grid .project-card h3 {
+  color: #2d3436;
+  margin-bottom: 0.5rem;
+}
+
+.projects-grid .project-card p {
+  color: #636e72;
+  margin-bottom: 1rem;
+}
+
+.project-meta {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+  color: #667eea;
+  font-weight: bold;
+}
