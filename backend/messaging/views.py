@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Message
-from .serializers import MessageSerializer
 from .permissions import IsAuthenticatedForMessaging
+from .serializers import MessageSerializer
 
 
 class MessageListCreateView(generics.ListCreateAPIView):

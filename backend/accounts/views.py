@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 import jwt
 from django.conf import settings
@@ -8,8 +8,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import RegisterSerializer
 from .models import User
+from .serializers import RegisterSerializer
 
 
 def _generate_jwt_for_user(user: User) -> str:

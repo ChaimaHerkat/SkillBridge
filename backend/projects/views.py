@@ -1,14 +1,13 @@
 from datetime import datetime
 
 from django.conf import settings
-from rest_framework import generics, filters, status
-from rest_framework.response import Response
+from rest_framework import filters, generics, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
+from rest_framework.response import Response
 
 from .models import Project
-from .serializers import ProjectSerializer
 from .permissions import IsProjectOwner
+from .serializers import ProjectSerializer
 
 
 class ProjectListCreateView(generics.ListCreateAPIView):
