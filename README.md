@@ -143,6 +143,45 @@ This role-based structure allows the platform to provide different experiences d
 
 ## 🔄 How SkillBridge Works
 
+```mermaid
+flowchart TD
+    START["🚀 SkillBridge"] --> HOME["🏠 Home Page"]
+
+    HOME --> AUTH{"🔐 Authentication"}
+
+    AUTH --> REGISTER["📝 Register"]
+    AUTH --> LOGIN["🔑 Login"]
+
+    REGISTER --> ROLE{"Choose Role"}
+    LOGIN --> ROLE
+
+    ROLE --> CLIENT["👤 Client"]
+    ROLE --> FREELANCER["💼 Freelancer"]
+
+    subgraph CLIENT_FLOW["👤 Client Journey"]
+        CLIENT --> CLIENT_DASH["📊 Client Dashboard"]
+        CLIENT_DASH --> CREATE["➕ Create Project"]
+        CLIENT_DASH --> MANAGE["📁 Manage Projects"]
+        CLIENT_DASH --> FIND["🔎 Find Freelancers"]
+        CREATE --> PROJECT["📌 Project"]
+        MANAGE --> PROJECT
+        FIND --> COLLAB["🤝 Collaboration"]
+    end
+
+    subgraph FREELANCER_FLOW["💼 Freelancer Journey"]
+        FREELANCER --> FREE_DASH["📊 Freelancer Dashboard"]
+        FREE_DASH --> MARKET["📂 Marketplace"]
+        FREE_DASH --> PROFILE["👤 Manage Profile"]
+        MARKET --> BROWSE["🔎 Browse Projects"]
+        BROWSE --> APPLY["📨 Apply / Collaborate"]
+        APPLY --> COLLAB
+        PROFILE --> COLLAB
+    end
+
+    PROJECT --> COLLAB
+    COLLAB --> MESSAGES["💬 Messaging"]
+    MESSAGES --> COMPLETION["✅ Project Completion"]
+
 ### 👤 Client Workflow
 
 ```text
@@ -163,61 +202,138 @@ Connect with freelancers
 Communicate
 ```
 
-### 💼 Freelancer Workflow
+### 2. 🏗️ System Architecture
 
-```text
-Create an account
-       ↓
-Login
-       ↓
-Complete professional profile
-       ↓
-Add skills and information
-       ↓
-Discover projects
-       ↓
-Connect with clients
-       ↓
-Communicate
-       ↓
-Manage freelance activities
-```
-
----
-
+```markdown
 ## 🏗️ System Architecture
 
-SkillBridge follows a **separated full-stack architecture**.
+```mermaid
+flowchart TB
 
-```text
-┌──────────────────────────────────────────┐
-│                 FRONTEND                 │
-│                                          │
-│          React + TypeScript + Vite       │
-│                                          │
-│  Pages • Components • Context • Hooks    │
-│  Services • Routes • Types • CSS         │
-└────────────────────┬─────────────────────┘
-                     │
-                     │ HTTP / REST API
-                     ▼
-┌──────────────────────────────────────────┐
-│                 BACKEND                  │
-│                                          │
-│       Django + Django REST Framework     │
-│                                          │
-│ Accounts • Projects • Messaging          │
-│ Authentication • Permissions • API       │
-└────────────────────┬─────────────────────┘
-                     │
-                     ▼
-┌──────────────────────────────────────────┐
-│                DATABASE                  │
-│                                          │
-│                  SQLite                  │
-└──────────────────────────────────────────┘
+    USER["👤 Client / Freelancer"]
+
+    subgraph FRONTEND["⚛️ Frontend — React + TypeScript + Vite"]
+
+        APP["App.tsx"]
+        ROUTES["AppRoutes.tsx"]
+
+        subgraph CONTEXT["Global Context"]
+            AUTH["🔐 AuthContext"]
+            THEME["🎨 ThemeContext"]
+        end
+
+        subgraph LAYOUTS["Layouts"]
+            MAIN["MainLayout"]
+            DASH["DashboardLayout"]
+        end
+
+        subgraph PAGES["Pages"]
+            HOME["🏠 Home"]
+            AUTH_PAGE["🔑 Auth"]
+            CLIENT["👤 Client"]
+            FREELANCER["💼 Freelancer"]
+            MARKET["📂 Marketplace"]
+            PROFILE["👤 Profile"]
+            MESSAGES["💬 Messages"]
+            ADMIN["⚙️ Admin"]
+        end
+
+        SERVICES["🔌 Services / API"]
+    end
+
+    subgraph BACKEND["🐍 Backend — Django + Django REST Framework"]
+
+        CONFIG["⚙️ config"]
+
+        ACCOUNTS["👥 accounts"]
+        PROJECTS["📁 projects"]
+        MESSAGES_APP["💬 messages"]
+        MESSAGING["📨 messaging"]
+
+        API["🌐 REST API"]
+        AUTH_BACK["🔐 Authentication"]
+    end
+
+    DB[("🗄️ SQLite Database")]
+
+    USER --> APP
+    APP --> ROUTES
+
+    ROUTES --> AUTH
+    ROUTES --> THEME
+    ROUTES --> MAIN
+    ROUTES --> DASH
+
+    MAIN --> HOME
+    MAIN --> AUTH_PAGE
+
+    DASH --> CLIENT
+    DASH --> FREELANCER
+    DASH --> MARKET
+    DASH --> PROFILE
+    DASH --> MESSAGES
+    DASH --> ADMIN
+
+    AUTH --> SERVICES
+    PAGES --> SERVICES
+
+    SERVICES -->|"HTTP / REST API"| API
+
+    API --> CONFIG
+    API --> ACCOUNTS
+    API --> PROJECTS
+    API --> MESSAGES_APP
+    API --> MESSAGING
+    API --> AUTH_BACK
+
+    ACCOUNTS --> DB
+    PROJECTS --> DB
+    MESSAGES_APP --> DB
+    MESSAGING --> DB
+
+---
 ```
+### 3. 🔐 Authentication Flow
 
+```markdown
+## 🔐 Authentication Flow
+
+```mermaid
+sequenceDiagram
+
+    actor User
+    participant React as React Frontend
+    participant Auth as AuthContext
+    participant API as Django REST API
+    participant DB as SQLite Database
+
+    User->>React: Enter credentials
+
+    React->>Auth: Login request
+
+    Auth->>API: Send authentication request
+
+    API->>DB: Validate user credentials
+
+    DB-->>API: User data
+
+    API-->>Auth: JWT tokens + user data
+
+    Auth-->>React: Update authentication state
+
+    React-->>User: Redirect to dashboard
+
+    User->>React: Access protected resource
+
+    React->>API: Request with JWT
+
+    API->>API: Validate JWT token
+
+    API-->>React: Return protected data
+
+    React-->>User: Display requested data
+
+```
 ### Frontend responsibilities
 
 The React frontend handles:
