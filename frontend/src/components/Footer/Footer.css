@@ -1,0 +1,290 @@
+/* =========================================================
+   SKILLBRIDGE - GLOBAL FOOTER
+   Same design language as Home
+========================================================= */
+
+.main-footer {
+  width: 100%;
+
+  background: #0f172a;
+
+  color: white;
+}
+
+/* =========================================================
+   FOOTER CONTAINER
+========================================================= */
+
+.main-footer-container {
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  padding: 70px 32px 55px;
+
+  display: grid;
+
+  grid-template-columns:
+    2fr
+    1fr
+    1fr
+    1fr;
+
+  gap: 70px;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.main-footer-brand {
+  max-width: 350px;
+}
+
+.main-footer-logo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: white;
+
+  font-size: 23px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.8px;
+}
+
+.main-footer-logo-icon {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+
+  color: white;
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.main-footer-logo > span {
+  color: #2563eb;
+}
+
+.main-footer-brand p {
+  margin: 20px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+
+  line-height: 1.8;
+}
+
+/* =========================================================
+   FOOTER COLUMNS
+========================================================= */
+
+.main-footer-column {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 13px;
+}
+
+.main-footer-column h4 {
+  margin: 0 0 8px;
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+.main-footer-column a {
+  width: fit-content;
+
+  color: #94a3b8;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.main-footer-column a:hover {
+  color: #60a5fa;
+
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   FOOTER BOTTOM
+========================================================= */
+
+.main-footer-bottom {
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  padding: 22px 32px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   SOCIALS
+========================================================= */
+
+.main-footer-socials {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+}
+
+.main-footer-social {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  color: #94a3b8;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  border: 1px solid rgba(148, 163, 184, 0.12);
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  transition: 0.25s ease;
+}
+
+.main-footer-social:hover {
+  color: white;
+
+  background: #2563eb;
+
+  border-color: #2563eb;
+
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .main-footer-container {
+    grid-template-columns: 1.5fr 1fr 1fr;
+
+    gap: 45px;
+  }
+
+  .main-footer-brand {
+    grid-column: 1 / -1;
+
+    max-width: 500px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .main-footer-container {
+    padding: 50px 24px 40px;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 40px 25px;
+  }
+
+  .main-footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .main-footer-column h4 {
+    font-size: 13px;
+  }
+
+  .main-footer-column a {
+    font-size: 12px;
+  }
+
+  .main-footer-bottom {
+    padding: 20px 24px;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+    text-align: center;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+  .main-footer-container {
+    grid-template-columns: 1fr;
+
+    gap: 30px;
+  }
+
+  .main-footer-brand {
+    grid-column: auto;
+  }
+
+  .main-footer-logo {
+    font-size: 21px;
+  }
+}

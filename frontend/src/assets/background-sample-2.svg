@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="g2" x1="0" x2="1">
+      <stop offset="0%" stop-color="#14B8A6" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g2)" />
+  <g fill="#08203a" font-family="Arial, Helvetica, sans-serif" font-weight="700">
+    <text x="60" y="120" font-size="48">SkillBridge</text>
+    <text x="60" y="180" font-size="28">Placeholder background 2</text>
+  </g>
+</svg>
