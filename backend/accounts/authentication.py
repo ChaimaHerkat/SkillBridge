@@ -10,25 +10,33 @@ class JWTAuthentication(authentication.BaseAuthentication):
     keyword = "Bearer"
 
     def authenticate(self, request):
-        auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
+        auth_header = request.headers.get("Authorization") or request.META.get(
+            "HTTP_AUTHORIZATION"
+        )
 
         if not auth_header:
             return None
 
         parts = auth_header.split()
+
         if len(parts) != 2 or parts[0].lower() != self.keyword.lower():
             return None
 
         token = parts[1]
 
         try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+            payload = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=["HS256"],
+            )
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Token expired")
         except jwt.InvalidTokenError:
             raise AuthenticationFailed("Invalid token")
 
         user_id = payload.get("user_id")
+
         if not user_id:
             raise AuthenticationFailed("Token missing user_id")
 
@@ -38,3 +46,6 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise AuthenticationFailed("User not found")
 
         return user, token
+
+    def authenticate_header(self, request):
+        return self.keyword

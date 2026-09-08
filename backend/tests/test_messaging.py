@@ -9,20 +9,32 @@ class MessagingTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         # create two users
-        self.u1 = User.objects.create_user(username="u1", password="pw1", email="u1@example.com")
-        self.u2 = User.objects.create_user(username="u2", password="pw2", email="u2@example.com")
+        self.u1 = User.objects.create_user(
+            username="u1", password="pw1", email="u1@example.com"
+        )
+        self.u2 = User.objects.create_user(
+            username="u2", password="pw2", email="u2@example.com"
+        )
 
     def _auth_as(self, username, password):
         # Login uses email in this project
         user = User.objects.get(username=username)
-        r = self.client.post("/api/auth/login/", {"email": user.email, "password": password}, format="json")
+        r = self.client.post(
+            "/api/auth/login/",
+            {"email": user.email, "password": password},
+            format="json",
+        )
         token = r.json().get("token")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     def test_send_and_get_conversation(self):
         # auth as u1 and send message to u2
         self._auth_as("u1", "pw1")
-        send = self.client.post("/api/messages/", {"recipient": self.u2.id, "content": "Hello"}, format="json")
+        send = self.client.post(
+            "/api/messages/",
+            {"recipient": self.u2.id, "content": "Hello"},
+            format="json",
+        )
         self.assertEqual(send.status_code, 201)
         data = send.json()
         self.assertEqual(data.get("recipient"), self.u2.id)

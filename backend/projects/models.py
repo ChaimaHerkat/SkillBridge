@@ -20,7 +20,9 @@ class Project(models.Model):
         max_length=20, choices=Status.choices, default=Status.OPEN
     )
     client = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="client_projects", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="client_projects",
+        on_delete=models.CASCADE,
     )
     freelancer = models.ForeignKey(
         settings.AUTH_USER_MODEL,

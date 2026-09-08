@@ -11,9 +11,9 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'recipient', 'content', 'read', 'created_at']
-        read_only_fields = ['id', 'sender', 'created_at']
+        fields = ["id", "sender", "recipient", "content", "read", "created_at"]
+        read_only_fields = ["id", "sender", "created_at"]
 
     def create(self, validated_data):
-        validated_data['sender'] = self.context['request'].user
+        validated_data["sender"] = self.context["request"].user
         return super().create(validated_data)

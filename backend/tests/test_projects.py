@@ -11,10 +11,16 @@ class ProjectsTestCase(TestCase):
         self.username = "client1"
         self.password = "pass1234"
         self.email = "client1@example.com"
-        User.objects.create_user(username=self.username, password=self.password, email=self.email)
+        User.objects.create_user(
+            username=self.username, password=self.password, email=self.email
+        )
 
     def _auth(self):
-        r = self.client.post("/api/auth/login/", {"email": self.email, "password": self.password}, format="json")
+        r = self.client.post(
+            "/api/auth/login/",
+            {"email": self.email, "password": self.password},
+            format="json",
+        )
         token = r.json().get("token")
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
