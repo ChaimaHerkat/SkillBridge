@@ -2,110 +2,142 @@
 
 > A modern full-stack freelance marketplace that connects clients with skilled freelancers through projects, profiles, and communication.
 
-SkillBridge is a full-stack web application designed to simplify the connection between clients looking for digital services and freelancers offering their skills.
+SkillBridge is a full-stack web application designed to simplify the connection between **clients looking for digital services** and **freelancers offering their skills**.
 
-The platform provides dedicated experiences for clients and freelancers, with authentication, project management, profiles, communication, and a modern responsive interface.
+The platform provides dedicated experiences for clients and freelancers, including authentication, profile management, project management, communication, dashboards, and a responsive user interface.
 
+---
 
---------------------------------------------------------------------------
+## 📑 Table of Contents
 
-⏩ Quick Links
-🎯 About SkillBridge
-✨ Features
-🔄 How SkillBridge Works
-🏗️ Architecture
-🛠️ Technologies
-📁 Project Structure
-📸 Screenshots
-⚙️ Setup
-🔐 Environment Variables
-🧪 Testing
-🔄 CI/CD
-🔌 API Overview
-🗺️ Future Improvements
-👩‍💻 Author
-📄 License
+* [🎯 About SkillBridge](#-about-skillbridge)
+* [✨ Key Features](#-key-features)
+* [👥 User Roles](#-user-roles)
+* [🔄 How SkillBridge Works](#-how-skillbridge-works)
+* [🏗️ System Architecture](#️-system-architecture)
+* [🛠️ Technology Stack](#️-technology-stack)
+* [📁 Project Structure](#-project-structure)
+* [📸 Application Screenshots](#-application-screenshots)
+* [⚙️ Installation & Setup](#️-installation--setup)
+* [🔐 Environment Variables](#-environment-variables)
+* [🧪 Testing](#-testing)
+* [🔄 CI/CD](#-cicd)
+* [🔌 API Overview](#-api-overview)
+* [🛡️ Security](#️-security)
+* [🗺️ Roadmap](#️-roadmap)
+* [🤝 Contributing](#-contributing)
+* [👩‍💻 Author](#-author)
+* [📄 License](#-license)
 
-
-----------------------------------------------------------------
-
+---
 
 ## 🎯 About SkillBridge
 
-SkillBridge is a freelance marketplace designed to bring **clients and freelancers together in one platform**.
+SkillBridge is a freelance marketplace built around a simple goal:
 
-The application allows users to create accounts, manage their profiles, publish and discover projects, and communicate with other users.
+> **Connect the right client with the right freelancer through a clear, structured, and user-friendly platform.**
 
-The project was developed as a full-stack application using a modern frontend architecture with **React and TypeScript** and a RESTful backend powered by **Django REST Framework**.
+The application separates the experiences of **clients** and **freelancers**, allowing each user type to access functionality adapted to their role.
 
-The main goals of SkillBridge are:
+### Main objectives
 
-* Connect clients with qualified freelancers.
-* Simplify project discovery and management.
-* Provide a clear and intuitive user experience.
-* Separate frontend and backend responsibilities.
-* Implement secure authentication and authorization.
-* Provide a scalable foundation for future marketplace features.
+* Connect clients with skilled freelancers.
+* Allow clients to create and manage projects.
+* Allow freelancers to discover available opportunities.
+* Provide dedicated dashboards for different user roles.
+* Facilitate communication between users.
+* Implement authentication and role-based access.
+* Provide a clean and responsive user experience.
+* Build a scalable foundation for future marketplace features.
 
------------------------------------------
+---
 
-
-## ✨ Features
-
-### 👤 Client
-
-Clients can:
-
-* Create an account.
-* Authenticate securely.
-* Manage their profile.
-* Discover freelancers.
-* Create and manage projects.
-* Communicate with freelancers.
-* Access their personalized dashboard.
-
-### 💼 Freelancer
-
-Freelancers can:
-
-* Create an account.
-* Authenticate securely.
-* Create and manage their professional profile.
-* Showcase their skills.
-* Discover available projects.
-* Interact with clients.
-* Manage their freelance activities through their dashboard.
+## ✨ Key Features
 
 ### 🔐 Authentication
 
-SkillBridge includes an authentication system supporting:
+SkillBridge provides an authentication system that includes:
 
 * User registration.
 * User login.
 * Authentication state management.
 * Protected application areas.
-* User roles and permissions.
+* Client and freelancer roles.
+* Backend-side authentication and permissions.
+
+### 👤 Client Features
+
+Clients can:
+
+* Create an account.
+* Log in securely.
+* Manage their profile.
+* Discover freelancers.
+* Create projects.
+* Manage their projects.
+* Connect with freelancers.
+* Communicate with freelancers.
+* Access a dedicated client dashboard.
+
+### 💼 Freelancer Features
+
+Freelancers can:
+
+* Create an account.
+* Log in securely.
+* Create and manage their professional profile.
+* Showcase their skills.
+* Discover available projects.
+* Interact with clients.
+* Manage their freelance activities.
+* Access a dedicated freelancer dashboard.
 
 ### 📂 Project Management
 
-The project management system provides the foundation for:
+The project marketplace provides functionality for:
 
 * Creating projects.
 * Viewing project information.
-* Managing project-related data.
-* Connecting clients with freelancers.
+* Managing project-related information.
+* Connecting clients and freelancers.
+* Tracking project-related activities.
 
-### 💬 Communication
+### 💬 Messaging
 
-SkillBridge includes a dedicated communication architecture allowing users to interact around their projects.
+SkillBridge includes a dedicated messaging system that allows users to communicate with each other through the platform.
 
-The backend contains dedicated messaging functionality while the frontend provides the corresponding application structure.
+The messaging architecture is implemented through the Django backend and exposed to the React frontend through API services.
 
-### 📊 Dashboard
+### 📊 Role-Based Dashboards
 
-Users have access to a dedicated dashboard experience adapted to their role.
+Each main user role has a dedicated dashboard:
 
-The dashboard provides a central place to access relevant information and platform functionality.
+```text
+Client
+   ↓
+Client Dashboard
+   ↓
+Projects • Freelancers • Activities
+
+Freelancer
+   ↓
+Freelancer Dashboard
+   ↓
+Projects • Skills • Activities
+```
+
+---
+
+## 👥 User Roles
+
+SkillBridge currently focuses on two main user roles.
+
+| Role              | Main Responsibilities                                                           |
+| ----------------- | ------------------------------------------------------------------------------- |
+| 👤 **Client**     | Create projects, discover freelancers, manage activities and communicate        |
+| 💼 **Freelancer** | Manage professional profile, showcase skills, discover projects and communicate |
+
+This role-based structure allows the platform to provide different experiences depending on the user's needs.
 
 ---
 
@@ -116,23 +148,27 @@ The dashboard provides a central place to access relevant information and platfo
 ```text
 Create an account
        ↓
+Login
+       ↓
 Complete profile
        ↓
 Discover freelancers
        ↓
-Create or manage a project
+Create a project
+       ↓
+Manage project activities
        ↓
 Connect with freelancers
        ↓
 Communicate
-       ↓
-Manage project activities
 ```
 
 ### 💼 Freelancer Workflow
 
 ```text
 Create an account
+       ↓
+Login
        ↓
 Complete professional profile
        ↓
@@ -144,58 +180,60 @@ Connect with clients
        ↓
 Communicate
        ↓
-Work on projects
+Manage freelance activities
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ System Architecture
 
 SkillBridge follows a **separated full-stack architecture**.
 
 ```text
-┌───────────────────────────────────────┐
-│              Frontend                 │
-│                                       │
-│       React + TypeScript + Vite       │
-│                                       │
-│  Pages • Components • Context • Hooks │
-│  Services • Routes • Types • Styles   │
-└───────────────────┬───────────────────┘
-                    │
-                    │ HTTP / REST API
-                    ▼
-┌───────────────────────────────────────┐
-│               Backend                 │
-│                                       │
-│       Django + Django REST Framework  │
-│                                       │
-│ Accounts • Projects • Messaging       │
-│ Authentication • API • Permissions    │
-└───────────────────┬───────────────────┘
-                    │
-                    ▼
-┌───────────────────────────────────────┐
-│              Database                 │
-│                  SQLite               │
-└───────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│                 FRONTEND                 │
+│                                          │
+│          React + TypeScript + Vite       │
+│                                          │
+│  Pages • Components • Context • Hooks    │
+│  Services • Routes • Types • CSS         │
+└────────────────────┬─────────────────────┘
+                     │
+                     │ HTTP / REST API
+                     ▼
+┌──────────────────────────────────────────┐
+│                 BACKEND                  │
+│                                          │
+│       Django + Django REST Framework     │
+│                                          │
+│ Accounts • Projects • Messaging          │
+│ Authentication • Permissions • API       │
+└────────────────────┬─────────────────────┘
+                     │
+                     ▼
+┌──────────────────────────────────────────┐
+│                DATABASE                  │
+│                                          │
+│                  SQLite                  │
+└──────────────────────────────────────────┘
 ```
 
-### Frontend
+### Frontend responsibilities
 
-The frontend is responsible for:
+The React frontend handles:
 
 * User interface.
 * Navigation and routing.
 * Authentication state.
 * API communication.
 * Reusable components.
-* User dashboards.
 * Forms and interactions.
+* Dashboards.
+* Responsive presentation.
 
-### Backend
+### Backend responsibilities
 
-The backend is responsible for:
+The Django backend handles:
 
 * Business logic.
 * Authentication.
@@ -209,7 +247,7 @@ The backend is responsible for:
 
 ---
 
-## 🛠️ Technologies
+## 🛠️ Technology Stack
 
 ### Frontend
 
@@ -228,22 +266,26 @@ The backend is responsible for:
 | **Python**                | Backend programming language |
 | **Django**                | Web framework                |
 | **Django REST Framework** | REST API development         |
+| **PyJWT**                 | JWT authentication           |
 | **django-cors-headers**   | Cross-origin requests        |
 | **python-dotenv**         | Environment configuration    |
 
 ### Database
 
-| Technology | Purpose              |
-| ---------- | -------------------- |
-| **SQLite** | Development database |
+| Technology | Purpose                    |
+| ---------- | -------------------------- |
+| **SQLite** | Local development database |
 
 ### Testing & Quality
 
-| Technology         | Purpose                |
-| ------------------ | ---------------------- |
-| **Django Tests**   | Backend testing        |
-| **Vitest**         | Frontend testing       |
-| **GitHub Actions** | Continuous integration |
+| Technology         | Purpose                           |
+| ------------------ | --------------------------------- |
+| **Django Tests**   | Backend testing                   |
+| **Vitest**         | Frontend testing                  |
+| **Playwright**     | End-to-end testing infrastructure |
+| **GitHub Actions** | Continuous integration            |
+| **Black**          | Python code formatting            |
+| **isort**          | Python import organization        |
 
 ### Development Tools
 
@@ -261,7 +303,6 @@ The backend is responsible for:
 SkillBridge/
 │
 ├── backend/
-│   │
 │   ├── accounts/
 │   │   ├── migrations/
 │   │   ├── management/
@@ -273,21 +314,21 @@ SkillBridge/
 │   │   └── tests.py
 │   │
 │   ├── messages/
-│   │
 │   ├── messaging/
-│   │
 │   ├── projects/
-│   │
 │   ├── tests/
 │   │
-│   └── config/
-│       ├── settings.py
-│       ├── urls.py
-│       └── ...
+│   ├── config/
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── manage.py
+│   └── requirements.txt
 │
 ├── frontend/
-│   │
 │   ├── src/
+│   │   ├── assets/
 │   │   ├── components/
 │   │   ├── context/
 │   │   ├── data/
@@ -300,72 +341,95 @@ SkillBridge/
 │   │   ├── test/
 │   │   └── types/
 │   │
+│   ├── e2e/
 │   ├── package.json
 │   ├── vite.config.ts
 │   └── vitest.config.ts
+│
+├── screenshots/
 │
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
 │
 ├── .gitignore
-├── README.md
-└── ...
+└── README.md
 ```
 
 ---
 
-## 📸 Screenshots
+# 📸 Application Screenshots
 
-### 🏠 Home Page
+## 🏠 Home Page
 
-The SkillBridge landing page introduces the platform and provides access to its main functionalities.
-[📸 View Home Page Screenshot](screenshots/Home.png)
+The SkillBridge landing page introduces the platform, explains its purpose, and provides access to the main functionalities.
 
-### 🔐 Authentication
-
-The authentication interface allows users to securely access the platform.
-
-🔐 Login — The login interface allows users to securely access their SkillBridge account.
-[📸 View Login Page Screenshot](screenshots/log-in.png)
-
-📝 Registration — The registration interface allows new users to create a SkillBridge account.
-[📸 View Register Page Screenshot](screenshots/register.png)
-
-
-### 📊 Client Dashboard
-
-The client dashboard provides access to client-specific functionality.
-[📸 View Client Dashboard Page Screenshot](screenshots/client-dashboard.png)
-
-### 💼 Freelancer Dashboard
-
-The freelancer dashboard provides access to professional activities and projects.
-[📸 View Freelancer Dashboard Page Screenshot](screenshots/freelancer-dashboard.png)
-
-### 📂 Projects
-
-The project area allows users to interact with project-related information.
-
-
-### 💬 Messaging
-
-The messaging interface provides communication between users.
+![SkillBridge Home Page](screenshots/Home.png)
 
 ---
 
-## ⚙️ Setup
+## 🔐 Authentication
+
+SkillBridge provides dedicated interfaces for both existing and new users.
+
+### Login
+
+The login interface allows users to securely access their SkillBridge account.
+
+![SkillBridge Login](screenshots/log-in.png)
+
+### Registration
+
+The registration interface allows new users to create a SkillBridge account and select their platform role.
+
+![SkillBridge Registration](screenshots/register.png)
+
+---
+
+## 📊 Client Dashboard
+
+The client dashboard provides access to client-specific activities, projects, and platform functionality.
+
+![SkillBridge Client Dashboard](screenshots/client-dashboard.png)
+
+---
+
+## 💼 Freelancer Dashboard
+
+The freelancer dashboard provides access to professional activities, projects, skills, and relevant platform functionality.
+
+![SkillBridge Freelancer Dashboard](screenshots/freelancer-dashboard.png)
+
+---
+
+## 📂 Projects
+
+The project area allows users to discover and interact with project-related information.
+
+> Additional project screenshots can be added as the interface evolves.
+
+---
+
+## 💬 Messaging
+
+The messaging system provides communication between clients and freelancers.
+
+> Additional messaging screenshots can be added here when the final messaging interface is documented.
+
+---
+
+## ⚙️ Installation & Setup
 
 ### 📋 Prerequisites
 
 Before running SkillBridge locally, make sure you have installed:
 
-* Python 3.13+
-* Node.js
-* npm
-* Git
+* **Python 3.13+**
+* **Node.js**
+* **npm**
+* **Git**
 
-You can verify your installations with:
+Verify the installed versions:
 
 ```bash
 python --version
@@ -376,19 +440,16 @@ git --version
 
 ---
 
-## 🔧 Backend Setup
-
-Clone the repository:
+## 📥 Clone the Repository
 
 ```bash
 git clone https://github.com/ChaimaHerkat/SkillBridge.git
-```
-
-Navigate to the project:
-
-```bash
 cd SkillBridge
 ```
+
+---
+
+# 🔧 Backend Setup
 
 Navigate to the backend:
 
@@ -396,9 +457,9 @@ Navigate to the backend:
 cd backend
 ```
 
-Create a virtual environment:
+### 1. Create a virtual environment
 
-### Windows
+#### Windows
 
 ```bash
 python -m venv venv
@@ -410,25 +471,42 @@ Activate it:
 venv\Scripts\activate
 ```
 
-Install the dependencies:
+#### macOS / Linux
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-If a requirements file is not available, install the required packages:
+### 3. Configure environment variables
 
-```bash
-pip install django djangorestframework django-cors-headers python-dotenv
+Create a `.env` file inside:
+
+```text
+backend/
+└── .env
 ```
 
-Run migrations:
+Example:
+
+```env
+SECRET_KEY=your-secret-key
+DEBUG=True
+```
+
+### 4. Apply migrations
 
 ```bash
 python manage.py migrate
 ```
 
-Start the Django development server:
+### 5. Start the backend
 
 ```bash
 python manage.py runserver
@@ -442,7 +520,7 @@ http://127.0.0.1:8000/
 
 ---
 
-## 💻 Frontend Setup
+# 💻 Frontend Setup
 
 Open a second terminal.
 
@@ -464,20 +542,17 @@ Start the development server:
 npm run dev
 ```
 
-Vite will display the local development URL in the terminal.
+Vite will display the local development URL in the terminal, usually:
+
+```text
+http://localhost:5173/
+```
 
 ---
 
-## 🔐 Environment Variables
+# 🔐 Environment Variables
 
 Sensitive configuration should be stored in environment variables rather than committed to Git.
-
-Create a `.env` file inside the backend directory:
-
-```text
-backend/
-└── .env
-```
 
 Example:
 
@@ -486,9 +561,17 @@ SECRET_KEY=your-secret-key
 DEBUG=True
 ```
 
-> Never commit real API keys, passwords, tokens, or production secrets to GitHub.
+### Important
 
-For development, a `.env.example` file can be used as a template:
+Never commit:
+
+* Secret keys
+* API keys
+* Passwords
+* Access tokens
+* Production credentials
+
+A `.env.example` file can be used as a safe template:
 
 ```env
 SECRET_KEY=
@@ -497,11 +580,11 @@ DEBUG=True
 
 ---
 
-## 🧪 Testing
+# 🧪 Testing
 
-SkillBridge contains testing infrastructure for both the backend and frontend.
+SkillBridge includes testing infrastructure for both backend and frontend components.
 
-### Backend Tests
+## Backend Tests
 
 From the `backend` directory:
 
@@ -509,87 +592,94 @@ From the `backend` directory:
 python manage.py test
 ```
 
-### Frontend Tests
+## Frontend Tests
 
 From the `frontend` directory:
 
 ```bash
-npm run test
+npm test
 ```
 
-For a production build:
+## Frontend Production Build
 
 ```bash
 npm run build
 ```
 
-Testing should be extended as new features are added to the application.
+## End-to-End Testing
+
+The frontend also contains an `e2e/` structure for end-to-end testing with Playwright.
 
 ---
 
-## 🔄 CI/CD
+# 🔄 CI/CD
 
-SkillBridge uses **GitHub Actions** to automate project checks.
+SkillBridge uses **GitHub Actions** to automate quality checks.
 
-The CI workflow is located at:
+The workflow is located at:
 
 ```text
 .github/workflows/ci.yml
 ```
 
-The workflow is designed to automatically verify important parts of the application when changes are pushed or pull requests are created.
-
-Typical checks include:
+The CI pipeline validates the project when changes are pushed or pull requests are created.
 
 ```text
-Push / Pull Request
-        ↓
-GitHub Actions
-        ↓
-Backend checks
-        ↓
-Frontend checks
-        ↓
-Build / Tests
-        ↓
-Status
+             Push / Pull Request
+                      │
+                      ▼
+              GitHub Actions
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+   Backend Checks          Frontend Checks
+          │                       │
+          ▼                       ▼
+   Tests / Quality         Tests / Build
+          │                       │
+          └───────────┬───────────┘
+                      ▼
+                   Status
 ```
 
-This helps detect problems before changes are merged into the project.
+This helps identify issues early and maintain project quality during development.
 
 ---
 
-## 🔌 API Overview
+# 🔌 API Overview
 
-The backend exposes REST API endpoints consumed by the React frontend.
+The Django backend exposes REST API endpoints consumed by the React frontend.
 
-The API is organized around the main application domains, including:
+The API is organized around the main application domains:
 
 ```text
-Authentication
-     │
-     ├── Accounts
-     │
-     ├── Projects
-     │
-     └── Messaging
+API
+│
+├── Authentication
+│   └── Accounts
+│
+├── Projects
+│
+└── Messaging
 ```
 
-The frontend communicates with the backend through dedicated service/API modules rather than directly coupling UI components to backend implementation details.
+The frontend communicates with the backend through dedicated service/API modules, helping keep UI components separated from backend implementation details.
 
 ---
 
-## 🔒 Security Considerations
+# 🛡️ Security
 
-SkillBridge follows several basic security practices:
+SkillBridge is designed with several security principles in mind:
 
-* Sensitive configuration is stored using environment variables.
-* Authentication is handled by the backend.
-* API permissions are handled server-side.
-* CORS configuration is used for frontend/backend communication.
-* Local development files should not be committed to Git.
+* Backend-side authentication.
+* JWT-based authentication.
+* Server-side permission checks.
+* Role-based access control.
+* Environment-based configuration.
+* CORS configuration for frontend/backend communication.
+* Separation between frontend and backend responsibilities.
 
-The following files/directories should remain excluded from version control:
+### Files that should remain outside version control
 
 ```text
 .env
@@ -600,59 +690,48 @@ node_modules/
 db.sqlite3
 ```
 
----
-
-## 🗺️ Future Improvements
-
-The current architecture provides a foundation for extending SkillBridge into a more complete freelance marketplace.
-
-Possible future improvements include:
-
-* ⭐ Reviews and ratings.
-* 💳 Online payment integration.
-* 🔔 Real-time notifications.
-* 🔎 Advanced freelancer and project search.
-* 📨 Improved real-time messaging.
-* 📊 Advanced analytics dashboards.
-* 📱 Mobile application.
-* ☁️ Cloud deployment.
-* 🐘 PostgreSQL for production.
-* 🐳 Docker-based deployment.
-* 🔐 Additional authentication providers.
-* 📈 Improved monitoring and logging.
-
-> These features are planned improvements and are not necessarily part of the current implementation.
+> Never commit real secrets, passwords, tokens, or production credentials to GitHub.
 
 ---
 
-## 🚀 Roadmap
+# 🗺️ Roadmap
 
-```text
-[x] Project foundation
-[x] React + TypeScript frontend
-[x] Django backend
-[x] REST API foundation
-[x] Authentication foundation
-[x] Client/Freelancer structure
-[x] Project structure
-[x] Messaging architecture
-[x] Testing infrastructure
-[x] GitHub Actions / CI
+SkillBridge currently provides the foundation of a freelance marketplace.
 
-[ ] Production deployment
-[ ] PostgreSQL
-[ ] Advanced search
-[ ] Reviews & ratings
-[ ] Notifications
-[ ] Online payments
-[ ] Mobile application
-```
+### ✅ Implemented Foundation
 
-> The roadmap should be updated as features are implemented.
+* [x] Project foundation
+* [x] React + TypeScript frontend
+* [x] Django backend
+* [x] REST API architecture
+* [x] Authentication foundation
+* [x] Client/Freelancer roles
+* [x] Role-specific dashboards
+* [x] Project management foundation
+* [x] Messaging architecture
+* [x] Testing infrastructure
+* [x] GitHub Actions / CI
+
+### 🚧 Future Improvements
+
+* [ ] Advanced project and freelancer search
+* [ ] Reviews and ratings
+* [ ] Real-time notifications
+* [ ] Improved real-time messaging
+* [ ] Online payment integration
+* [ ] Advanced analytics dashboards
+* [ ] PostgreSQL for production
+* [ ] Cloud deployment
+* [ ] Docker-based deployment
+* [ ] Additional authentication providers
+* [ ] Mobile application
+* [ ] Advanced monitoring and logging
+
+> The roadmap represents possible future improvements and does not necessarily mean these features are currently implemented.
 
 ---
 
-## 🤝 Contributing
+# 🤝 Contributing
 
 Contributions, suggestions, and improvements are welcome.
 
@@ -663,7 +742,7 @@ git clone https://github.com/ChaimaHerkat/SkillBridge.git
 cd SkillBridge
 ```
 
-Create a new branch:
+Create a feature branch:
 
 ```bash
 git checkout -b feature/your-feature
@@ -673,37 +752,53 @@ Make your changes, test them, and submit a pull request.
 
 ---
 
-## 👩‍💻 Author
+# 👩‍💻 Author
 
-**Chaima Herkat**
+## Chaima Herkat
 
-Master 2 — Bioinformatics
+**Master 2 — Bioinformatics**
 
-SkillBridge was developed as a full-stack software engineering project combining modern frontend development, backend API development, authentication, testing, and version control.
+SkillBridge was developed as a full-stack software engineering project combining:
+
+* Modern frontend development
+* REST API development
+* Authentication and authorization
+* Database management
+* Testing
+* Continuous integration
+* Version control
+
+GitHub:
+https://github.com/ChaimaHerkat
+
+Email: 
+chaimaherkat4@gmail.com
 
 ---
 
-## 📄 License
+# 📄 License
 
-This project is currently intended as an educational and portfolio project.
+This project is currently intended as an **educational and portfolio project**.
 
-If a specific open-source license is added to the repository, this section should be updated accordingly.
+No specific open-source license has currently been defined for the repository.
 
 ---
 
-## ⭐ Acknowledgements
+# ⭐ Acknowledgements
 
 Built with:
 
-* React
-* TypeScript
-* Django
-* Django REST Framework
-* Vite
-* GitHub Actions
+* [React](https://react.dev/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [Vite](https://vite.dev/)
+* [Django](https://www.djangoproject.com/)
+* [Django REST Framework](https://www.django-rest-framework.org/)
+* [GitHub Actions](https://github.com/features/actions)
 
 ---
 
 <p align="center">
   Built with ❤️ by <strong>Chaima Herkat</strong>
 </p>
+
+
