@@ -7,6 +7,7 @@ import React, {
 
 import type { User } from "../types/user";
 import authService from "../services/authService";
+import { isTokenExpired } from "../utils/jwt";
 
 interface AuthContextType {
   user: User | null;
@@ -50,18 +51,25 @@ export const AuthProvider = ({
     const authToken = localStorage.getItem("authToken");
 
     if (storedUser && authToken) {
-      try {
-        const parsedUser: User = JSON.parse(storedUser);
-        setUser(parsedUser);
-      } catch (error) {
-        console.error(
-          "Failed to restore user session:",
-          error
-        );
-
+      // Check if token has expired
+      if (isTokenExpired(authToken)) {
+        // Clear expired session
         localStorage.removeItem("user");
         localStorage.removeItem("authToken");
-        localStorage.removeItem("mockPassword");
+        setUser(null);
+      } else {
+        try {
+          const parsedUser: User = JSON.parse(storedUser);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error(
+            "Failed to restore user session:",
+            error
+          );
+
+          localStorage.removeItem("user");
+          localStorage.removeItem("authToken");
+        }
       }
     }
 

@@ -1,14 +1,14 @@
 export interface User {
-  id: string
+  id: number | string
   username: string
   email: string
   firstName: string
   lastName: string
   avatar?: string
   bio?: string
-  role: 'client' | 'freelancer' | 'admin'
-  createdAt: Date
-  updatedAt: Date
+  role: 'CLIENT' | 'FREELANCER'
+  createdAt?: string | Date
+  updatedAt?: string | Date
 }
 
 export interface AuthUser extends User {

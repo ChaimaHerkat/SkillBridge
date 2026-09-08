@@ -1,19 +1,19 @@
 export interface Project {
-  id: string;
+  id: number | string;
   title: string;
   description: string;
   category: string;
   budget: number;
   currency: string;
   duration: string;
-  skillsRequired: string[];
+  skills_required: string[];
   status: 'open' | 'in_progress' | 'completed' | 'cancelled';
-  clientId: string;
-  freelancerId?: string;
-  applicants?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  deadline?: Date;
+  client: number | string;
+  freelancer?: number | string | null;
+  applicants?: (number | string)[];
+  created_at: string | Date;
+  updated_at: string | Date;
+  deadline?: string | Date | null;
   attachments?: string[];
 }
 

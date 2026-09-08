@@ -133,10 +133,24 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '1000/hour',
+    },
 }
 
-# Development CORS: allow frontend dev server to access the API
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS Configuration - be specific about allowed origins
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173'
+).split(',')
+
+# Keep CORS_ALLOW_ALL_ORIGINS as False for production
+CORS_ALLOW_ALL_ORIGINS = False
 
 
 # Email

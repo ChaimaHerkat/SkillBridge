@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import jwt
 from django.conf import settings
 from rest_framework import generics, filters, status
 from rest_framework.response import Response
@@ -9,6 +8,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import Project
 from .serializers import ProjectSerializer
+from .permissions import IsProjectOwner
 
 
 class ProjectListCreateView(generics.ListCreateAPIView):
@@ -45,20 +45,10 @@ class ProjectListCreateView(generics.ListCreateAPIView):
         return qs
 
     def create(self, request, *args, **kwargs):
-        # If Authorization header contains our JWT, extract user_id and set as client
-        auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
+        # Use request.user from JWTAuthentication
         data = request.data.copy()
-
-        if auth_header and auth_header.startswith("Bearer "):
-            token = auth_header.split(" ", 1)[1]
-            try:
-                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-                user_id = payload.get("user_id")
-                if user_id and not data.get("client"):
-                    data["client"] = user_id
-            except Exception:
-                # ignore token errors; permission class will handle unauthenticated
-                pass
+        if request.user and request.user.is_authenticated and not data.get("client"):
+            data["client"] = request.user.id
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -70,3 +60,4 @@ class ProjectListCreateView(generics.ListCreateAPIView):
 class ProjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsProjectOwner]

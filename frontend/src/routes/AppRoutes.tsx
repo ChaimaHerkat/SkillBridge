@@ -11,6 +11,7 @@ import Messages from "../pages/Messages";
 
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -46,16 +47,24 @@ function AppRoutes() {
       />
 
       {/* =====================================================
-          DASHBOARD
+          PROTECTED DASHBOARD
       ===================================================== */}
 
       <Route
         path="/dashboard"
-        element={<Dashboard />}
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/dashboard/create-project"
-        element={<CreateProject />}
+        element={
+          <ProtectedRoute>
+            <CreateProject />
+          </ProtectedRoute>
+        }
       />
 
       {/* Marketplace */}
@@ -81,15 +90,17 @@ function AppRoutes() {
         }
       />
 
-      {/* Messaging */}
+      {/* Protected Messaging */}
       <Route
         path="/messages"
         element={
-          <>
-            <Header />
-            <Messages />
-            <Footer />
-          </>
+          <ProtectedRoute>
+            <>
+              <Header />
+              <Messages />
+              <Footer />
+            </>
+          </ProtectedRoute>
         }
       />
 

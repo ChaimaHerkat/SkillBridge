@@ -46,6 +46,14 @@ export const apiCall = async <T>(
   }
 
   if (!response.ok) {
+    // Handle 401 Unauthorized - clear auth and redirect
+    if (response.status === 401) {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('user')
+      // Redirect to login
+      window.location.href = '/login'
+    }
+
     // Build a friendly message when validation errors exist
     let message = `API Error: ${response.status} ${response.statusText}`
 

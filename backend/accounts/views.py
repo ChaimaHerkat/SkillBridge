@@ -4,7 +4,7 @@ import jwt
 from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -86,29 +86,11 @@ class LoginView(APIView):
 
 
 class MeView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
-
-        if not auth_header or not auth_header.startswith("Bearer "):
-            return Response({"detail": "Authorization header required"}, status=status.HTTP_401_UNAUTHORIZED)
-
-        token = auth_header.split(" ", 1)[1]
-
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        except jwt.ExpiredSignatureError:
-            return Response({"detail": "Token expired"}, status=status.HTTP_401_UNAUTHORIZED)
-        except jwt.InvalidTokenError:
-            return Response({"detail": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
-
-        user_id = payload.get("user_id")
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-
+        # Use request.user which is already populated by JWTAuthentication
+        user = request.user
         return Response(
             {
                 "id": user.id,
