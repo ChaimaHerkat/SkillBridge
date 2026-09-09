@@ -98,15 +98,13 @@ const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <>
               <Link to="/messages" style={navLinkStyle}>Messages</Link>
-              {user?.role === 'client' && (
+              {user?.role === 'CLIENT' && (
                 <Link to="/dashboard" style={navLinkStyle}>Dashboard</Link>
               )}
-              {user?.role === 'freelancer' && (
+              {user?.role === 'FREELANCER' && (
                 <Link to="/freelancer-dashboard" style={navLinkStyle}>Dashboard</Link>
               )}
-              {user?.role === 'admin' && (
-                <Link to="/admin" style={navLinkStyle}>Admin</Link>
-              )}
+              
               <div style={userSectionStyle}>
                 <div style={userAvatarStyle}>{user?.firstName?.[0] || 'U'}</div>
                 <button onClick={handleLogout} style={logoutButtonStyle}>Logout</button>

@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
     return null;
   }
 
-  const isFreelancer = user.role === "freelancer";
+  const isFreelancer = user.role === "FREELANCER";
 
   /* =====================================================
      LOGOUT
