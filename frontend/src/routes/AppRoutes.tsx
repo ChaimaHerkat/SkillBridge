@@ -3,28 +3,25 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
+
 import Dashboard from "../pages/Dashboard/Dashboard";
 import CreateProject from "../pages/Dashboard/CreateProject";
+
 import Marketplace from "../pages/Marketplace/Marketplace";
 import ProjectDetails from "../pages/Marketplace/ProjectDetails";
+
 import Messages from "../pages/Messages";
+
+import Freelancers from "../pages/Freelancer/Freelancers";
 
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import ProtectedRoute from "../components/ProtectedRoute";
 
-
-import Freelancers from "../pages/Freelancers/Freelancers";
-import Marketplace from "../pages/Marketplace/Marketplace";
-
 function AppRoutes() {
   return (
     <Routes>
-
-      {/* =====================================================
-          PUBLIC PAGES
-      ===================================================== */}
-
+      {/* Home */}
       <Route
         path="/"
         element={
@@ -36,24 +33,11 @@ function AppRoutes() {
         }
       />
 
-      {/* =====================================================
-          AUTH PAGES
-      ===================================================== */}
+      {/* Authentication */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-      <Route
-        path="/login"
-        element={<Login />}
-      />
-
-      <Route
-        path="/register"
-        element={<Register />}
-      />
-
-      {/* =====================================================
-          PROTECTED DASHBOARD
-      ===================================================== */}
-
+      {/* Dashboard */}
       <Route
         path="/dashboard"
         element={
@@ -63,21 +47,24 @@ function AppRoutes() {
         }
       />
 
-
-<Route path="/freelancers" element={<Freelancers />} />
-<Route path="/marketplace" element={<Marketplace />} />
-<Route
-  path="/marketplace/:id"
-  element={<ProjectDetails />}
-/>
-
-
       <Route
         path="/dashboard/create-project"
         element={
           <ProtectedRoute>
             <CreateProject />
           </ProtectedRoute>
+        }
+      />
+
+      {/* Freelancers */}
+      <Route
+        path="/freelancers"
+        element={
+          <>
+            <Header />
+            <Freelancers />
+            <Footer />
+          </>
         }
       />
 
@@ -93,6 +80,7 @@ function AppRoutes() {
         }
       />
 
+      {/* Project Details */}
       <Route
         path="/marketplace/:id"
         element={
@@ -104,7 +92,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Protected Messaging */}
+      {/* Messages */}
       <Route
         path="/messages"
         element={
@@ -117,7 +105,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
     </Routes>
   );
 }
