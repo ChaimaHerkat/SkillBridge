@@ -1,14 +1,14 @@
 /* =========================================================
-   MARKETPLACE PAGE
+   FREELANCERS PAGE
 ========================================================= */
 
-.marketplace-page {
+.freelancers-page {
   min-height: 100vh;
   background: #f8fafc;
   color: #0f172a;
 }
 
-.marketplace-container {
+.freelancers-container {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
 }
@@ -17,7 +17,7 @@
    HERO
 ========================================================= */
 
-.marketplace-hero {
+.freelancers-hero {
   padding: 90px 0 55px;
   background:
     radial-gradient(
@@ -28,51 +28,50 @@
     #ffffff;
 }
 
-.marketplace-heading {
+.freelancers-heading {
   max-width: 760px;
   margin: 0 auto;
   text-align: center;
 }
 
-.marketplace-label {
+.freelancers-label {
   display: inline-flex;
+  align-items: center;
   justify-content: center;
-
   margin-bottom: 18px;
 
-  color: #2563eb;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.14em;
+  color: #2563eb;
 }
 
-.marketplace-heading h1 {
+.freelancers-heading h1 {
   margin: 0;
-
   font-size: clamp(40px, 5vw, 62px);
   line-height: 1.05;
   letter-spacing: -0.045em;
 }
 
-.marketplace-heading p {
+.freelancers-heading p {
   max-width: 650px;
   margin: 22px auto 0;
 
-  color: #64748b;
   font-size: 17px;
   line-height: 1.7;
+  color: #64748b;
 }
 
 /* =========================================================
    SEARCH
 ========================================================= */
 
-.marketplace-search-wrapper {
+.freelancers-search-wrapper {
   max-width: 720px;
   margin: 42px auto 0;
 }
 
-.marketplace-search {
+.freelancers-search {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -91,19 +90,20 @@
     box-shadow 0.2s ease;
 }
 
-.marketplace-search:focus-within {
+.freelancers-search:focus-within {
   border-color: #2563eb;
   box-shadow:
     0 0 0 4px rgba(37, 99, 235, 0.1),
     0 12px 35px rgba(15, 23, 42, 0.08);
 }
 
-.marketplace-search-icon {
+.search-icon {
   font-size: 27px;
+  line-height: 1;
   color: #64748b;
 }
 
-.marketplace-search input {
+.freelancers-search input {
   flex: 1;
   min-width: 0;
 
@@ -111,15 +111,15 @@
   outline: none;
   background: transparent;
 
-  color: #0f172a;
   font-size: 15px;
+  color: #0f172a;
 }
 
-.marketplace-search input::placeholder {
+.freelancers-search input::placeholder {
   color: #94a3b8;
 }
 
-.marketplace-clear {
+.clear-search {
   border: 0;
   background: transparent;
 
@@ -132,30 +132,33 @@
    COUNT
 ========================================================= */
 
-.marketplace-count {
+.freelancers-count {
   display: flex;
   align-items: baseline;
   justify-content: center;
   gap: 7px;
 
   margin-top: 32px;
+
+  text-align: center;
 }
 
-.marketplace-count strong {
+.freelancers-count strong {
   font-size: 25px;
   font-weight: 800;
+  color: #0f172a;
 }
 
-.marketplace-count span {
-  color: #64748b;
+.freelancers-count span {
   font-size: 14px;
+  color: #64748b;
 }
 
 /* =========================================================
    FILTERS
 ========================================================= */
 
-.marketplace-filters {
+.freelancer-filters {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -164,7 +167,7 @@
   margin-top: 22px;
 }
 
-.marketplace-filter {
+.category-filter {
   padding: 10px 18px;
 
   border: 1px solid #dbe3ef;
@@ -185,15 +188,15 @@
     transform 0.2s ease;
 }
 
-.marketplace-filter:hover {
+.category-filter:hover {
   border-color: #93c5fd;
   color: #2563eb;
   transform: translateY(-1px);
 }
 
-.marketplace-filter.active {
-  border-color: #2563eb;
+.category-filter.active {
   background: #2563eb;
+  border-color: #2563eb;
   color: #ffffff;
 }
 
@@ -201,47 +204,25 @@
    RESULTS
 ========================================================= */
 
-.marketplace-results {
-  padding: 55px 0 95px;
+.freelancers-results {
+  padding: 35px 0 95px;
 }
 
-.marketplace-section-heading {
-  margin-bottom: 28px;
-}
-
-.marketplace-section-heading span {
-  color: #2563eb;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.13em;
-}
-
-.marketplace-section-heading h2 {
-  margin: 7px 0 5px;
-
-  font-size: 30px;
-  letter-spacing: -0.025em;
-}
-
-.marketplace-section-heading p {
-  margin: 0;
-
-  color: #64748b;
-  font-size: 14px;
-}
-
-/* =========================================================
-   PROJECT GRID
-========================================================= */
-
-.projects-grid {
+.freelancers-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
 
-.project-card {
-  padding: 26px;
+/* =========================================================
+   PROFILE CARD
+========================================================= */
+
+.freelancer-profile-card {
+  display: flex;
+  flex-direction: column;
+
+  padding: 27px;
 
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -255,23 +236,67 @@
     border-color 0.25s ease;
 }
 
-.project-card:hover {
+.freelancer-profile-card:hover {
   transform: translateY(-5px);
   border-color: #bfdbfe;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
 }
 
-.project-card-top {
+.profile-card-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 15px;
 }
 
-.project-category {
-  padding: 6px 9px;
+.profile-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
 
-  border-radius: 7px;
+.profile-avatar {
+  width: 66px;
+  height: 66px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+  border: 3px solid #eff6ff;
+}
+
+.availability-dot {
+  position: absolute;
+  right: 2px;
+  bottom: 3px;
+
+  width: 13px;
+  height: 13px;
+
+  background: #22c55e;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+}
+
+.profile-heading h2 {
+  margin: 0;
+
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.profile-heading p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+  font-size: 14px;
+}
+
+.verified-badge {
+  align-self: flex-start;
+
+  margin-top: 18px;
+  padding: 6px 10px;
+
+  border-radius: 999px;
 
   background: #eff6ff;
   color: #2563eb;
@@ -280,57 +305,79 @@
   font-weight: 700;
 }
 
-.project-status {
-  color: #16a34a;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.project-card h3 {
-  margin: 20px 0 10px;
-
-  font-size: 19px;
-  line-height: 1.35;
-}
-
-.project-description {
-  min-height: 68px;
-  margin: 0;
+.profile-description {
+  margin: 19px 0 0;
 
   color: #64748b;
   font-size: 14px;
   line-height: 1.65;
 }
 
-.project-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-
-  margin-top: 22px;
-  padding: 16px 0;
-
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.project-details div {
+.profile-skills {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  margin-top: 18px;
 }
 
-.project-details span {
-  color: #94a3b8;
+.profile-skills span {
+  padding: 6px 9px;
+
+  border-radius: 7px;
+
+  background: #f1f5f9;
+  color: #475569;
+
   font-size: 11px;
+  font-weight: 600;
 }
 
-.project-details strong {
-  color: #0f172a;
+.profile-divider {
+  height: 1px;
+  margin: 22px 0 17px;
+
+  background: #e2e8f0;
+}
+
+.profile-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
   font-size: 14px;
 }
 
-.project-button {
+.profile-rating span {
+  color: #f59e0b;
+}
+
+.profile-rating strong {
+  color: #334155;
+}
+
+.profile-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.profile-price strong {
+  font-size: 18px;
+}
+
+.profile-price span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.profile-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -356,27 +403,26 @@
     transform 0.2s ease;
 }
 
-.project-button:hover {
+.profile-button:hover {
   background: #2563eb;
   transform: translateY(-1px);
 }
 
-.project-button span {
+.profile-button span {
   transition: transform 0.2s ease;
 }
 
-.project-button:hover span {
+.profile-button:hover span {
   transform: translateX(3px);
 }
 
 /* =========================================================
-   LOADING / ERROR / EMPTY
+   EMPTY
 ========================================================= */
 
-.marketplace-state,
-.marketplace-empty {
-  max-width: 700px;
-  margin: 20px auto 0;
+.freelancers-empty {
+  max-width: 620px;
+  margin: 25px auto 0;
   padding: 70px 30px;
 
   text-align: center;
@@ -386,67 +432,36 @@
   border-radius: 20px;
 }
 
-.marketplace-state h2,
-.marketplace-empty h2 {
-  margin: 18px 0 10px;
-
-  font-size: 24px;
-}
-
-.marketplace-state p,
-.marketplace-empty p {
-  max-width: 500px;
-  margin: 0 auto;
-
-  color: #64748b;
-  line-height: 1.65;
-}
-
-.state-loader {
-  width: 42px;
-  height: 42px;
-  margin: 0 auto;
-
-  border: 4px solid #dbeafe;
-  border-top-color: #2563eb;
-  border-radius: 50%;
-
-  animation: marketplace-spin 0.8s linear infinite;
-}
-
-@keyframes marketplace-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.state-icon,
-.marketplace-empty-icon {
+.empty-icon {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 60px;
-  height: 60px;
-  margin: 0 auto;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 20px;
 
   border-radius: 16px;
-
   background: #eff6ff;
+
   color: #2563eb;
-
   font-size: 27px;
-  font-weight: 800;
 }
 
-.error-state .state-icon {
-  background: #fef2f2;
-  color: #dc2626;
+.freelancers-empty h2 {
+  margin: 0;
+  font-size: 23px;
 }
 
-.marketplace-state button,
-.clear-filters-button {
-  margin-top: 25px;
+.freelancers-empty p {
+  margin: 12px auto 25px;
+  max-width: 440px;
+
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.freelancers-empty button {
   padding: 11px 20px;
 
   border: 0;
@@ -455,54 +470,41 @@
   background: #2563eb;
   color: #ffffff;
 
-  font-size: 13px;
   font-weight: 700;
-
   cursor: pointer;
-}
-
-.marketplace-empty-icon {
-  margin-bottom: 20px;
-  font-size: 25px;
-}
-
-.empty-label {
-  color: #2563eb;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
 }
 
 /* =========================================================
    CTA
 ========================================================= */
 
-.marketplace-cta {
+.freelancers-cta {
   padding: 95px 20px;
 
   background: #0f172a;
 }
 
-.marketplace-cta-inner {
+.freelancers-cta-inner {
   max-width: 760px;
   margin: 0 auto;
 
   text-align: center;
 }
 
-.marketplace-cta .marketplace-label {
+.freelancers-cta .freelancers-label {
   color: #93c5fd;
 }
 
-.marketplace-cta h2 {
+.freelancers-cta h2 {
   margin: 0;
 
   color: #ffffff;
   font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.15;
   letter-spacing: -0.035em;
 }
 
-.marketplace-cta p {
+.freelancers-cta p {
   max-width: 650px;
   margin: 20px auto 30px;
 
@@ -510,7 +512,7 @@
   line-height: 1.7;
 }
 
-.marketplace-cta button {
+.freelancers-cta-button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -524,7 +526,6 @@
   color: #0f172a;
 
   font-weight: 800;
-
   cursor: pointer;
 
   transition:
@@ -532,7 +533,7 @@
     background 0.2s ease;
 }
 
-.marketplace-cta button:hover {
+.freelancers-cta-button:hover {
   background: #eff6ff;
   transform: translateY(-2px);
 }
@@ -541,13 +542,13 @@
    KEYBOARD FOCUS
 ========================================================= */
 
-.marketplace-page
+.freelancers-page
   :where(button, a, input):focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
 
-.marketplace-cta button:focus-visible {
+.freelancers-cta-button:focus-visible {
   outline-color: #ffffff;
 }
 
@@ -556,23 +557,23 @@
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .marketplace-page *,
-  .marketplace-page *::before,
-  .marketplace-page *::after {
+  .freelancers-page *,
+  .freelancers-page *::before,
+  .freelancers-page *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 
-  .project-card:hover,
-  .marketplace-filter:hover,
-  .project-button:hover,
-  .marketplace-cta button:hover {
+  .freelancer-profile-card:hover,
+  .category-filter:hover,
+  .profile-button:hover,
+  .freelancers-cta-button:hover {
     transform: none;
   }
 
-  .project-button:hover span {
+  .profile-button:hover span {
     transform: none;
   }
 }
@@ -582,38 +583,42 @@
 ========================================================= */
 
 @media (max-width: 950px) {
-  .projects-grid {
+  .freelancers-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 650px) {
-  .marketplace-container {
+  .freelancers-container {
     width: min(100% - 28px, 1180px);
   }
 
-  .marketplace-hero {
+  .freelancers-hero {
     padding: 65px 0 40px;
   }
 
-  .marketplace-heading h1 {
+  .freelancers-heading h1 {
     font-size: 39px;
   }
 
-  .marketplace-heading p {
+  .freelancers-heading p {
     font-size: 15px;
   }
 
-  .projects-grid {
+  .freelancers-grid {
     grid-template-columns: 1fr;
   }
 
-  .marketplace-filter {
+  .freelancer-filters {
+    gap: 7px;
+  }
+
+  .category-filter {
     padding: 9px 13px;
     font-size: 12px;
   }
 
-  .marketplace-cta {
+  .freelancers-cta {
     padding: 70px 20px;
   }
 }

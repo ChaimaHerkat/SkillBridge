@@ -13,6 +13,10 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import ProtectedRoute from "../components/ProtectedRoute";
 
+
+import Freelancers from "../pages/Freelancers/Freelancers";
+import Marketplace from "../pages/Marketplace/Marketplace";
+
 function AppRoutes() {
   return (
     <Routes>
@@ -58,6 +62,16 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+
+<Route path="/freelancers" element={<Freelancers />} />
+<Route path="/marketplace" element={<Marketplace />} />
+<Route
+  path="/marketplace/:id"
+  element={<ProjectDetails />}
+/>
+
+
       <Route
         path="/dashboard/create-project"
         element={
