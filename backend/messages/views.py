@@ -15,9 +15,9 @@ class MessageListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         # conversation between current user and other user (query param `user`)
-        auth_header = self.request.headers.get(
-            "Authorization"
-        ) or self.request.META.get("HTTP_AUTHORIZATION")
+        auth_header = self.request.headers.get("Authorization") or self.request.META.get(
+            "HTTP_AUTHORIZATION"
+        )
         current_user_id = None
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ", 1)[1]
@@ -44,9 +44,9 @@ class MessageListCreateView(generics.ListCreateAPIView):
         return Message.objects.none()
 
     def create(self, request, *args, **kwargs):
-        auth_header = self.request.headers.get(
-            "Authorization"
-        ) or self.request.META.get("HTTP_AUTHORIZATION")
+        auth_header = self.request.headers.get("Authorization") or self.request.META.get(
+            "HTTP_AUTHORIZATION"
+        )
         if not auth_header or not auth_header.startswith("Bearer "):
             return Response(
                 {"detail": "Authentication required"},
@@ -58,9 +58,7 @@ class MessageListCreateView(generics.ListCreateAPIView):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
             current_user_id = payload.get("user_id")
         except Exception:
-            return Response(
-                {"detail": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"detail": "Invalid token"}, status=status.HTTP_401_UNAUTHORIZED)
 
         data = request.data.copy()
         data["sender"] = current_user_id
@@ -69,6 +67,4 @@ class MessageListCreateView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

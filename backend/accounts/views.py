@@ -63,22 +63,15 @@ class LoginView(APIView):
             )
 
         user = (
-            User.objects.filter(email=email).first()
-            or User.objects.filter(username=email).first()
+            User.objects.filter(email=email).first() or User.objects.filter(username=email).first()
         )
 
         if user is None:
-            return Response(
-                {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        authenticated_user = authenticate(
-            request, username=user.username, password=password
-        )
+        authenticated_user = authenticate(request, username=user.username, password=password)
         if authenticated_user is None:
-            return Response(
-                {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
         token = _generate_jwt_for_user(authenticated_user)
 

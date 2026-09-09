@@ -9,12 +9,8 @@ class MessagingTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         # create two users
-        self.u1 = User.objects.create_user(
-            username="u1", password="pw1", email="u1@example.com"
-        )
-        self.u2 = User.objects.create_user(
-            username="u2", password="pw2", email="u2@example.com"
-        )
+        self.u1 = User.objects.create_user(username="u1", password="pw1", email="u1@example.com")
+        self.u2 = User.objects.create_user(username="u2", password="pw2", email="u2@example.com")
 
     def _auth_as(self, username, password):
         # Login uses email in this project

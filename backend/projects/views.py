@@ -39,9 +39,7 @@ class ProjectListCreateView(generics.ListCreateAPIView):
             except ValueError:
                 pass
         if search:
-            qs = qs.filter(title__icontains=search) | qs.filter(
-                description__icontains=search
-            )
+            qs = qs.filter(title__icontains=search) | qs.filter(description__icontains=search)
 
         return qs
 
@@ -55,9 +53,7 @@ class ProjectListCreateView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ProjectDetailView(generics.RetrieveUpdateDestroyAPIView):

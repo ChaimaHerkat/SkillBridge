@@ -10,9 +10,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
     keyword = "Bearer"
 
     def authenticate(self, request):
-        auth_header = request.headers.get("Authorization") or request.META.get(
-            "HTTP_AUTHORIZATION"
-        )
+        auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
 
         if not auth_header:
             return None

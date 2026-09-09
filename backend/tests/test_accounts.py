@@ -11,9 +11,7 @@ class AccountsTestCase(TestCase):
         self.username = "testuser"
         self.password = "password123"
         self.email = "test@example.com"
-        User.objects.create_user(
-            username=self.username, password=self.password, email=self.email
-        )
+        User.objects.create_user(username=self.username, password=self.password, email=self.email)
 
     def test_login_returns_token_and_user(self):
         resp = self.client.post(

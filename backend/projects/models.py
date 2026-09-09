@@ -16,9 +16,7 @@ class Project(models.Model):
     currency = models.CharField(max_length=10, default="USD")
     duration = models.CharField(max_length=50, blank=True, default="")
     skills_required = models.JSONField(default=list, blank=True)
-    status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.OPEN
-    )
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN)
     client = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="client_projects",
