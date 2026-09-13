@@ -1030,3 +1030,304 @@
     display: none;
   }
 }
+
+
+/* =====================================================
+   RECOMMENDED PROJECTS
+===================================================== */
+
+.recommended-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.recommended-empty {
+  width: 100%;
+  min-height: 260px;
+  padding: 32px 28px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background: linear-gradient(
+    180deg,
+    #f8fbff 0%,
+    #ffffff 100%
+  );
+
+  border: 1px solid #e6edf7;
+  border-radius: 16px;
+
+  box-sizing: border-box;
+
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* subtle decorative background */
+
+.recommended-empty::before {
+  content: "";
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  top: -90px;
+  right: -70px;
+
+  background: #eef5ff;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+.recommended-empty::after {
+  content: "";
+  position: absolute;
+
+  width: 140px;
+  height: 140px;
+
+  bottom: -80px;
+  left: -60px;
+
+  background: #f3f7fc;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   EMPTY ICON
+===================================================== */
+
+.recommended-empty-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eef5ff;
+
+  border: 1px solid #dbe9fb;
+
+  border-radius: 16px;
+
+  margin-bottom: 18px;
+
+  position: relative;
+  z-index: 1;
+}
+
+
+.recommended-empty-icon span {
+  font-size: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* =====================================================
+   EMPTY CONTENT
+===================================================== */
+
+.recommended-empty-content {
+  position: relative;
+  z-index: 1;
+
+  max-width: 390px;
+}
+
+
+.recommended-empty-content h4 {
+  margin: 0 0 8px;
+
+  color: #172033;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  line-height: 1.4;
+}
+
+
+.recommended-empty-content p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 14px;
+  font-weight: 400;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   BROWSE BUTTON
+===================================================== */
+
+.recommended-browse-button {
+  margin-top: 22px;
+
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.18);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.recommended-browse-button span {
+  font-size: 16px;
+
+  transition: transform 0.2s ease;
+}
+
+
+.recommended-browse-button:hover {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.24);
+}
+
+
+.recommended-browse-button:hover span {
+  transform: translateX(3px);
+}
+
+
+.recommended-browse-button:active {
+  transform: translateY(0);
+
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.18);
+}
+
+
+/* =====================================================
+   PROJECT LIST
+===================================================== */
+
+.recommended-projects-list .project-item {
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.recommended-projects-list .project-item:hover {
+  transform: translateY(-2px);
+
+  border-color: #d6e4f7;
+
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
+
+.recommended-browse-button:focus-visible,
+.recommended-projects-list .project-item:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.2);
+  outline-offset: 2px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .recommended-empty {
+    min-height: 230px;
+
+    padding: 28px 20px;
+  }
+
+  .recommended-empty-content {
+    max-width: 320px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .recommended-empty {
+    min-height: 220px;
+
+    padding: 24px 16px;
+  }
+
+  .recommended-empty-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+  }
+
+  .recommended-empty-content h4 {
+    font-size: 16px;
+  }
+
+  .recommended-empty-content p {
+    font-size: 13px;
+  }
+
+  .recommended-browse-button {
+    width: 100%;
+    max-width: 220px;
+  }
+
+}
+

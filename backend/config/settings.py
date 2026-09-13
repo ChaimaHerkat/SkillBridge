@@ -34,17 +34,19 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 # Application definition
 
 INSTALLED_APPS = [
-    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "rest_framework",
+    "corsheaders",
+
     "accounts",
     "projects",
-    "messaging",
+    "messages.apps.MessagesConfig",
 ]
 
 MIDDLEWARE = [
@@ -162,3 +164,17 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = "accounts.User"
+
+# ---------------------------------------------------------------------------
+# Password hashers
+# In development we use MD5 as the *primary* hasher so that login is instant.
+# The full PBKDF2 hasher is kept second so that existing hashes (created with
+# the default Django hasher) can still be verified — Django automatically
+# upgrades the hash to the primary hasher on the next successful login.
+# Remove the MD5 entry (or swap order) before deploying to production.
+# ---------------------------------------------------------------------------
+if DEBUG:
+    PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+        "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    ]

@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 import jwt
 from django.conf import settings
-from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -62,29 +61,32 @@ class LoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Look up user by email first, then by username (email is used as username on register)
         user = (
-            User.objects.filter(email=email).first() or User.objects.filter(username=email).first()
+            User.objects.filter(email=email).first()
+            or User.objects.filter(username=email).first()
         )
 
-        if user is None:
+        if user is None or not user.is_active:
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        authenticated_user = authenticate(request, username=user.username, password=password)
-        if authenticated_user is None:
+        # Use check_password() directly — avoids Django auth-backend overhead
+        # and works correctly with our custom User model.
+        if not user.check_password(password):
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        token = _generate_jwt_for_user(authenticated_user)
+        token = _generate_jwt_for_user(user)
 
         return Response(
             {
                 "token": token,
                 "user": {
-                    "id": authenticated_user.id,
-                    "username": authenticated_user.username,
-                    "firstName": authenticated_user.firstName,
-                    "lastName": authenticated_user.lastName,
-                    "email": authenticated_user.email,
-                    "role": authenticated_user.role,
+                    "id": user.id,
+                    "username": user.username,
+                    "firstName": user.firstName,
+                    "lastName": user.lastName,
+                    "email": user.email,
+                    "role": user.role,
                 },
             }
         )

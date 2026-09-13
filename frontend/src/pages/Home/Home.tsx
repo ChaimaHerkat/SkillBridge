@@ -208,19 +208,19 @@ function HeroCarousel() {
           <div className="hero-buttons">
 
             <button
-              className="primary-btn"
-              onClick={() => navigate("/marketplace")}
-            >
-              Find a Freelancer
-              <span>→</span>
-            </button>
+  className="primary-btn"
+  onClick={() => navigate("/freelancers")}
+>
+  Find a Freelancer
+  <span>→</span>
+</button>
 
-            <button
-              className="secondary-btn"
-              onClick={() => navigate("/marketplace")}
-            >
-              Find a Project
-            </button>
+<button
+  className="secondary-btn"
+  onClick={() => navigate("/marketplace")}
+>
+  Find a Project
+</button>
 
           </div>
 
@@ -653,153 +653,7 @@ function HeroCarousel() {
 
       </section>
 
-      {/* =====================================================
-          FOOTER
-      ===================================================== */}
 
-      <footer className="footer">
-
-        <div className="footer-container">
-
-          {/* Brand */}
-
-          <div className="footer-brand">
-
-            <div className="logo">
-              <div className="logo-icon">
-                SB
-              </div>
-
-              Skill<span>Bridge</span>
-            </div>
-
-            <p>
-              A modern freelance marketplace
-              connecting talented professionals
-              with businesses around the world.
-            </p>
-
-          </div>
-
-          {/* Marketplace */}
-
-          <div className="footer-column">
-
-            <h4>
-              Marketplace
-            </h4>
-
-            <a href="#categories">
-              Browse Categories
-            </a>
-
-            <a href="#freelancers">
-              Find Freelancers
-            </a>
-
-            <a href="#">
-              Find Projects
-            </a>
-
-            <a href="#">
-              Post a Project
-            </a>
-
-          </div>
-
-          {/* Company */}
-
-          <div className="footer-column">
-
-            <h4>
-              Company
-            </h4>
-
-            <a href="#">
-              About Us
-            </a>
-
-            <a href="#">
-              How It Works
-            </a>
-
-            <a href="#">
-              Careers
-            </a>
-
-            <a href="#">
-              Contact
-            </a>
-
-          </div>
-
-          {/* Support */}
-
-          <div className="footer-column">
-
-            <h4>
-              Support
-            </h4>
-
-            <a href="#">
-              Help Center
-            </a>
-
-            <a href="#">
-              Terms of Service
-            </a>
-
-            <a href="#">
-              Privacy Policy
-            </a>
-
-            <a href="#">
-              Community
-            </a>
-
-          </div>
-
-        </div>
-
-        {/* Footer Bottom */}
-
-        <div className="footer-bottom">
-
-          <span>
-            © 2026 SkillBridge. All rights reserved.
-          </span>
-
-          <div className="footer-socials">
-
-            <a
-              href="#"
-              className="footer-social"
-              aria-label="LinkedIn"
-            >
-              in
-            </a>
-
-            <a
-              href="#"
-              className="footer-social"
-              aria-label="Twitter"
-            >
-              𝕏
-            </a>
-
-            <a
-              href="#"
-              className="footer-social"
-              aria-label="Instagram"
-            >
-              ◎
-            </a>
-
-          </div>
-
-        </div>
-
-      </footer>
 
     </div>
   );

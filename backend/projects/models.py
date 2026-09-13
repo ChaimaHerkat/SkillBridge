@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 
 
+
 class Project(models.Model):
     class Status(models.TextChoices):
         OPEN = "open", "Open"
@@ -38,3 +39,49 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+    
+    
+class Proposal(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        ACCEPTED = "accepted", "Accepted"
+        REJECTED = "rejected", "Rejected"
+        WITHDRAWN = "withdrawn", "Withdrawn"
+
+    project = models.ForeignKey(
+        Project,
+        related_name="proposals",
+        on_delete=models.CASCADE,
+    )
+
+    freelancer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="proposals",
+        on_delete=models.CASCADE,
+    )
+
+    cover_letter = models.TextField()
+
+    proposed_budget = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+
+    delivery_time = models.CharField(max_length=50)
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.freelancer} → {self.project.title}"    

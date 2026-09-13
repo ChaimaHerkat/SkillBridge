@@ -1,0 +1,265 @@
+.create-proposal-page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.create-proposal-container {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.create-proposal-hero {
+  padding: 82px 0 70px;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.create-proposal-heading {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.create-proposal-label,
+.create-proposal-small-label {
+  display: inline-block;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.create-proposal-heading h1 {
+  margin: 14px 0 16px;
+  color: #0f172a;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.08;
+  font-weight: 750;
+}
+
+.create-proposal-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.create-proposal-section {
+  padding: 60px 0 90px;
+}
+
+.create-proposal-card {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 42px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.07);
+}
+
+.create-proposal-card-header {
+  margin-bottom: 34px;
+}
+
+.create-proposal-card-header h2 {
+  margin: 10px 0 8px;
+  color: #0f172a;
+  font-size: 28px;
+}
+
+.create-proposal-card-header p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.create-proposal-error {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #b91c1c;
+}
+
+.create-proposal-error span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.create-proposal-error p {
+  margin: 0;
+}
+
+.create-proposal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.create-proposal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-proposal-field.full {
+  width: 100%;
+}
+
+.create-proposal-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.create-proposal-field label {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.create-proposal-field label span {
+  margin-left: 4px;
+  color: #2563eb;
+}
+
+.create-proposal-field input,
+.create-proposal-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.create-proposal-field textarea {
+  min-height: 190px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.create-proposal-field input:focus,
+.create-proposal-field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.create-proposal-field small {
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.create-proposal-divider {
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.create-proposal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.create-proposal-cancel,
+.create-proposal-submit {
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-proposal-cancel {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #475569;
+}
+
+.create-proposal-cancel:hover {
+  background: #f8fafc;
+}
+
+.create-proposal-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+}
+
+.create-proposal-submit:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.create-proposal-submit:disabled,
+.create-proposal-cancel:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.create-proposal-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: createProposalSpin 0.7s linear infinite;
+}
+
+@keyframes createProposalSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
+  .create-proposal-container {
+    width: min(100% - 24px, 1120px);
+  }
+
+  .create-proposal-hero {
+    padding: 60px 0 50px;
+  }
+
+  .create-proposal-card {
+    padding: 26px 20px;
+    border-radius: 16px;
+  }
+
+  .create-proposal-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .create-proposal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .create-proposal-cancel,
+  .create-proposal-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}

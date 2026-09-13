@@ -28,7 +28,8 @@ export const apiCall = async <T>(
 
   // Normalize endpoint: ensure it has leading and trailing slash to avoid Django APPEND_SLASH redirects
   const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-  const url = normalizedEndpoint.endsWith('/') ? `${API_BASE_URL}${normalizedEndpoint}` : `${API_BASE_URL}${normalizedEndpoint}/`
+  
+  const url = `${API_BASE_URL}${normalizedEndpoint}`
 
   const response = await fetch(url, {
     ...options,

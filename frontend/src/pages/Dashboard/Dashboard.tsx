@@ -1,22 +1,156 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import projectService from "../../services/projectService";
+import proposalService from "../../services/proposalService";
+import type { Project } from "../../types/project";
+import type { Proposal } from "../../services/proposalService";
 import "./Dashboard.css";
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+
   /* =====================================================
      SECURITY CHECK
   ===================================================== */
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  const isFreelancer = user?.role === "FREELANCER";
+
+  /* =====================================================
+     LOAD DASHBOARD DATA
+  ===================================================== */
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      if (!user) return;
+
+      setIsLoadingData(true);
+
+      try {
+        const [projectsData, proposalsData] = await Promise.all([
+          projectService.getProjects(),
+          proposalService.getProposals(),
+        ]);
+
+        setProjects(projectsData);
+        setProposals(proposalsData);
+      } catch (error) {
+        console.error("Failed to load dashboard data:", error);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    loadDashboardData();
+  }, [user]);
+
+  /* =====================================================
+     WAIT FOR USER
+  ===================================================== */
+
   if (!user) {
-    navigate("/login");
     return null;
   }
 
-  const isFreelancer = user.role === "FREELANCER";
+  /* =====================================================
+     FREELANCER STATISTICS
+  ===================================================== */
+
+  const freelancerProjects = projects.filter(
+    (project) =>
+      project.freelancer !== null &&
+      String(project.freelancer) === String(user.id)
+  );
+
+  const activeFreelancerProjects = freelancerProjects.filter(
+    (project) =>
+      project.status === "open" ||
+      project.status === "in_progress"
+  );
+
+  const completedFreelancerProjects = freelancerProjects.filter(
+    (project) =>
+      project.status === "completed"
+  );
+
+  /* Number of proposals submitted */
+  const applicationCount = proposals.length;
+
+  /* Accepted proposals */
+  const acceptedProposals = proposals.filter(
+    (proposal) =>
+      proposal.status?.toLowerCase() === "accepted"
+  );
+
+  /* Total value of accepted proposals */
+  const freelancerEarnings = acceptedProposals.reduce(
+    (total, proposal) =>
+      total + Number(proposal.proposed_budget || 0),
+    0
+  );
+
+  /* =====================================================
+     CLIENT STATISTICS
+  ===================================================== */
+
+  const clientProjects = projects.filter(
+    (project) =>
+      String(project.client) === String(user.id)
+  );
+
+  const activeClientProjects = clientProjects.filter(
+    (project) =>
+      project.status === "open" ||
+      project.status === "in_progress"
+  );
+
+  /* IDs of projects belonging to this client */
+  const clientProjectIds = new Set(
+    clientProjects.map((project) => project.id)
+  );
+
+  /* Proposals received on client's projects */
+  const receivedProposals = proposals.filter(
+    (proposal) =>
+      clientProjectIds.has(Number(proposal.project))
+  );
+
+  /* Accepted proposals received by client */
+  const acceptedClientProposals = receivedProposals.filter(
+    (proposal) =>
+      proposal.status?.toLowerCase() === "accepted"
+  );
+
+  /* Total value of accepted proposals */
+  const clientTotalSpent = acceptedClientProposals.reduce(
+    (total, proposal) =>
+      total + Number(proposal.proposed_budget || 0),
+    0
+  );
+
+  /* =====================================================
+     RECOMMENDED PROJECTS FOR FREELANCER
+  ===================================================== */
+
+  const recommendedProjects = projects
+    .filter(
+      (project) =>
+        project.status === "open" &&
+        String(project.client) !== String(user.id) &&
+        String(project.freelancer ?? "") !== String(user.id)
+    )
+    .slice(0, 3);
 
   /* =====================================================
      LOGOUT
@@ -26,6 +160,30 @@ const Dashboard: React.FC = () => {
     logout();
     navigate("/login");
   };
+
+
+  /* =====================================================
+     PROFILE COMPLETION
+  ===================================================== */
+
+  const profileFields = [
+    user.firstName,
+    user.lastName,
+    user.email,
+  ];
+
+  const completedProfileFields = profileFields.filter(
+    (field) => field && String(field).trim() !== ""
+  ).length;
+
+  const profileCompletion = Math.round(
+    (completedProfileFields / profileFields.length) * 100
+  );
+
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <div className="dashboard-page">
@@ -37,12 +195,13 @@ const Dashboard: React.FC = () => {
       <aside className="dashboard-sidebar">
 
         {/* Logo */}
+
         <div
           className="dashboard-logo"
           onClick={() => navigate("/")}
         >
           <div className="dashboard-logo-icon">
-            S
+            SB
           </div>
 
           <span>
@@ -51,54 +210,89 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Navigation */}
+
         <nav className="dashboard-nav">
 
           <div className="dashboard-nav-section">
+
             <span className="dashboard-nav-title">
               MAIN
             </span>
 
-            <button className="dashboard-nav-item active">
+            <button
+             className="dashboard-nav-item active"
+             onClick={() => navigate("/dashboard")}
+            >
               <span>▦</span>
-              Overview
+                Overview
             </button>
 
             {isFreelancer ? (
               <>
-                <button className="dashboard-nav-item">
+                <button
+                  className="dashboard-nav-item"
+                   onClick={() => navigate("/dashboard/my-projects")}
+                >
                   <span>💼</span>
-                  My Projects
+                     My Projects
                 </button>
 
-                <button className="dashboard-nav-item">
+                <button
+                  className="dashboard-nav-item"
+                  onClick={() =>
+                    navigate("/dashboard/proposals")
+                  }
+                >
                   <span>📄</span>
                   My Proposals
                 </button>
 
-                <button className="dashboard-nav-item">
+                <button
+                  className="dashboard-nav-item"
+                  onClick={() => navigate("/marketplace")}
+                >
                   <span>🔖</span>
-                  Saved Jobs
+                     Saved Jobs
                 </button>
               </>
             ) : (
               <>
-                <button className="dashboard-nav-item">
+                <button
+                  className="dashboard-nav-item"
+                  onClick={() =>
+                    navigate("/dashboard/projects")
+                  }
+                >
                   <span>💼</span>
                   My Projects
                 </button>
 
-                <button className="dashboard-nav-item">
+                <button
+                  className="dashboard-nav-item"
+                  onClick={() =>
+                    navigate("/dashboard/create-project")
+                  }
+                >
                   <span>➕</span>
                   Post a Project
                 </button>
 
-                <button className="dashboard-nav-item">
+                <button
+                  className="dashboard-nav-item"
+                  onClick={() =>
+                    navigate("/freelancers")
+                  }
+                >
                   <span>👥</span>
                   Freelancers
                 </button>
               </>
             )}
+
           </div>
+
+
+          {/* Communication */}
 
           <div className="dashboard-nav-section">
 
@@ -106,15 +300,18 @@ const Dashboard: React.FC = () => {
               COMMUNICATION
             </span>
 
-            <button className="dashboard-nav-item">
+            <button
+              className="dashboard-nav-item"
+              onClick={() => navigate("/messages")}
+            >
               <span>💬</span>
-              Messages
-              <span className="dashboard-notification">
-                3
-              </span>
+                 Messages
             </button>
-
+            
           </div>
+
+
+          {/* Account */}
 
           <div className="dashboard-nav-section">
 
@@ -122,9 +319,12 @@ const Dashboard: React.FC = () => {
               ACCOUNT
             </span>
 
-            <button className="dashboard-nav-item">
+            <button
+              className="dashboard-nav-item"
+              onClick={() => navigate("/dashboard/profile")}
+            >
               <span>👤</span>
-              My Profile
+                 My Profile
             </button>
 
             <button className="dashboard-nav-item">
@@ -136,7 +336,9 @@ const Dashboard: React.FC = () => {
 
         </nav>
 
+
         {/* Logout */}
+
         <button
           className="dashboard-logout"
           onClick={handleLogout}
@@ -154,10 +356,14 @@ const Dashboard: React.FC = () => {
 
       <main className="dashboard-main">
 
-        {/* Top bar */}
+        {/* =====================================================
+            TOP BAR
+        ===================================================== */}
+
         <div className="dashboard-topbar">
 
           <div>
+
             <span className="dashboard-page-label">
               DASHBOARD
             </span>
@@ -165,11 +371,14 @@ const Dashboard: React.FC = () => {
             <h1>
               Overview
             </h1>
+
           </div>
+
 
           <div className="dashboard-user">
 
             <div className="dashboard-user-info">
+
               <strong>
                 {user.firstName} {user.lastName}
               </strong>
@@ -179,10 +388,14 @@ const Dashboard: React.FC = () => {
                   ? "Freelancer"
                   : "Client"}
               </span>
+
             </div>
 
+
             <div className="dashboard-avatar">
-              {user.firstName?.charAt(0).toUpperCase()}
+              {user.firstName
+                ?.charAt(0)
+                .toUpperCase()}
             </div>
 
           </div>
@@ -197,6 +410,7 @@ const Dashboard: React.FC = () => {
         <section className="dashboard-welcome">
 
           <div>
+
             <span className="welcome-small">
               {isFreelancer
                 ? "FREELANCER SPACE"
@@ -212,25 +426,35 @@ const Dashboard: React.FC = () => {
                 ? "Discover new opportunities and grow your freelance career."
                 : "Manage your projects and find talented professionals."}
             </p>
+
           </div>
 
+
           <div className="welcome-icon">
-            {isFreelancer ? "🚀" : "💡"}
+            {isFreelancer
+              ? "🚀"
+              : "💡"}
           </div>
 
         </section>
 
 
         {/* =====================================================
-            STATISTICS
+            REAL DASHBOARD STATISTICS
         ===================================================== */}
 
         <section className="dashboard-stats">
 
+          {/* =================================================
+              APPLICATIONS / PROJECTS POSTED
+          ================================================= */}
+
           <div className="stat-card">
 
             <div className="stat-icon blue">
-              {isFreelancer ? "📄" : "💼"}
+              {isFreelancer
+                ? "📄"
+                : "💼"}
             </div>
 
             <div className="stat-content">
@@ -242,67 +466,87 @@ const Dashboard: React.FC = () => {
               </span>
 
               <strong>
-                {isFreelancer ? "12" : "8"}
+                {isLoadingData
+                  ? "..."
+                  : isFreelancer
+                    ? applicationCount
+                    : clientProjects.length}
               </strong>
 
               <small>
-                <b>+12%</b> this month
+                {isFreelancer
+                  ? "Total submitted"
+                  : "Total created"}
               </small>
 
             </div>
 
           </div>
 
+
+          {/* =================================================
+              ACTIVE PROJECTS
+          ================================================= */}
 
           <div className="stat-card">
 
             <div className="stat-icon green">
-              {isFreelancer ? "⚡" : "📊"}
+              {isFreelancer
+                ? "⚡"
+                : "📊"}
             </div>
 
             <div className="stat-content">
 
               <span>
-                {isFreelancer
-                  ? "Active Projects"
-                  : "Active Projects"}
+                Active Projects
               </span>
 
               <strong>
-                {isFreelancer ? "4" : "3"}
+                {isLoadingData
+                  ? "..."
+                  : isFreelancer
+                    ? activeFreelancerProjects.length
+                    : activeClientProjects.length}
               </strong>
 
               <small>
-                <b>+8%</b> this month
+                Currently active
               </small>
 
             </div>
 
           </div>
 
+
+          {/* =================================================
+              ACCEPTED VALUE
+          ================================================= */}
 
           <div className="stat-card">
 
             <div className="stat-icon purple">
-              {isFreelancer ? "💰" : "💳"}
+              {isFreelancer
+                ? "💰"
+                : "💳"}
             </div>
 
             <div className="stat-content">
 
               <span>
-                {isFreelancer
-                  ? "Total Earnings"
-                  : "Total Spent"}
+                Accepted Value
               </span>
 
               <strong>
-                {isFreelancer
-                  ? "$2,450"
-                  : "$8,450"}
+                {isLoadingData
+                  ? "..."
+                  : isFreelancer
+                    ? freelancerEarnings
+                    : clientTotalSpent}
               </strong>
 
               <small>
-                <b>+15%</b> this month
+                From accepted proposals
               </small>
 
             </div>
@@ -310,30 +554,38 @@ const Dashboard: React.FC = () => {
           </div>
 
 
+          {/* =================================================
+              COMPLETED / RECEIVED PROPOSALS
+          ================================================= */}
+
           <div className="stat-card">
 
             <div className="stat-icon orange">
-              {isFreelancer ? "⭐" : "👥"}
+              {isFreelancer
+                ? "✓"
+                : "👥"}
             </div>
 
             <div className="stat-content">
 
               <span>
                 {isFreelancer
-                  ? "Rating"
-                  : "Proposals"}
+                  ? "Completed Projects"
+                  : "Received Proposals"}
               </span>
 
               <strong>
-                {isFreelancer
-                  ? "4.9"
-                  : "24"}
+                {isLoadingData
+                  ? "..."
+                  : isFreelancer
+                    ? completedFreelancerProjects.length
+                    : receivedProposals.length}
               </strong>
 
               <small>
                 {isFreelancer
-                  ? "Excellent rating"
-                  : "Waiting for review"}
+                  ? "Successfully completed"
+                  : "On your projects"}
               </small>
 
             </div>
@@ -351,7 +603,7 @@ const Dashboard: React.FC = () => {
 
 
           {/* =================================================
-              LEFT - PROJECTS
+              PROJECTS CARD
           ================================================= */}
 
           <div className="dashboard-card projects-card">
@@ -359,6 +611,7 @@ const Dashboard: React.FC = () => {
             <div className="card-header">
 
               <div>
+
                 <span className="card-label">
                   {isFreelancer
                     ? "RECOMMENDED"
@@ -370,144 +623,251 @@ const Dashboard: React.FC = () => {
                     ? "Recommended Projects"
                     : "Your Projects"}
                 </h3>
+
               </div>
 
-              <button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    isFreelancer
+                      ? "/marketplace"
+                      : "/dashboard/projects"
+                  )
+                }
+              >
                 View all →
               </button>
 
             </div>
 
 
-            {/* Project 1 */}
+            {/* =================================================
+                FREELANCER PROJECTS
+            ================================================= */}
+              
+            {isFreelancer ? (
 
-            <div className="project-item">
+              recommendedProjects.length > 0 ? (
 
-              <div className="project-icon">
-                ⚡
-              </div>
+                <div className="recommended-projects-list">
 
-              <div className="project-info">
+                  {recommendedProjects.map((project) => (
 
-                <h4>
-                  {isFreelancer
-                    ? "Modern React Web Application"
-                    : "E-commerce Website"}
-                </h4>
+                    <div
+                      className="project-item"
+                      key={project.id}
+                      onClick={() =>
+                        navigate(`/marketplace/${project.id}`)
+                      }
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          navigate(`/marketplace/${project.id}`);
+                        }
+                      }}
+                    >
 
-                <p>
-                  {isFreelancer
-                    ? "React · TypeScript · UI/UX"
-                    : "Website development · React"}
-                </p>
+                      <div className="project-icon">
+                        💼
+                      </div>
 
-              </div>
+                      <div className="project-info">
 
-              <div className="project-right">
+                        <h4>
+                          {project.title}
+                        </h4>
 
-                <strong>
-                  {isFreelancer
-                    ? "$800 - $1,200"
-                    : "In Progress"}
-                </strong>
+                        <p>
+                          {project.skills_required?.length
+                            ? project.skills_required
+                                .slice(0, 3)
+                                .join(" · ")
+                            : project.category || "Project"}
+                        </p>
 
-                <span className="project-status">
-                  Active
-                </span>
+                      </div>
 
-              </div>
+                      <div className="project-right">
 
-            </div>
+                        <strong>
+                          {project.currency} {project.budget}
+                        </strong>
+
+                        <span className="project-status pending">
+                          New
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  ))}
+
+                </div>
+
+              ) : (
+
+                <div className="recommended-empty">
+
+                  <div className="recommended-empty-icon">
+                    <span>💼</span>
+                  </div>
+
+                  <div className="recommended-empty-content">
+
+                    <h4>
+                      No projects available
+                    </h4>
+
+                    <p>
+                      There are no new opportunities available
+                      for you right now.
+                    </p>
+
+                  </div>
+
+                  <button
+                    type="button"
+                    className="recommended-browse-button"
+                    onClick={() =>
+                      navigate("/marketplace")
+                    }
+                  >
+                    Browse Marketplace
+                    <span>→</span>
+                  </button>
+
+                </div>
+
+              )
+
+            ) : (
 
 
-            {/* Project 2 */}
 
-            <div className="project-item">
+              /* =================================================
+                 CLIENT PROJECTS
+              ================================================= */
 
-              <div className="project-icon second">
-                💻
-              </div>
+              clientProjects.length > 0 ? (
 
-              <div className="project-info">
+                clientProjects
+                  .slice(0, 3)
+                  .map((project) => {
 
-                <h4>
-                  {isFreelancer
-                    ? "Mobile App Development"
-                    : "Business Dashboard"}
-                </h4>
+                    const projectProposals =
+                      receivedProposals.filter(
+                        (proposal) =>
+                          Number(proposal.project) ===
+                          Number(project.id)
+                      );
 
-                <p>
-                  {isFreelancer
-                    ? "React Native · Firebase"
-                    : "Dashboard · Data visualization"}
-                </p>
+                    const projectAccepted =
+                      projectProposals.some(
+                        (proposal) =>
+                          proposal.status
+                            ?.toLowerCase() ===
+                          "accepted"
+                      );
 
-              </div>
+                    return (
 
-              <div className="project-right">
+                      <div
+                        className="project-item"
+                        key={project.id}
+                      >
 
-                <strong>
-                  {isFreelancer
-                    ? "$1,500 - $2,000"
-                    : "5 proposals"}
-                </strong>
-
-                <span className="project-status pending">
-                  {isFreelancer
-                    ? "New"
-                    : "Reviewing"}
-                </span>
-
-              </div>
-
-            </div>
+                        <div className="project-icon">
+                          {project.status ===
+                          "in_progress"
+                            ? "⚡"
+                            : "💼"}
+                        </div>
 
 
-            {/* Project 3 */}
+                        <div className="project-info">
 
-            <div className="project-item">
+                          <h4>
+                            {project.title}
+                          </h4>
 
-              <div className="project-icon third">
-                🎨
-              </div>
+                          <p>
+                            {project.skills_required?.length
+                              ? project.skills_required
+                                  .slice(0, 3)
+                                  .join(" · ")
+                              : project.category ||
+                                "Project"}
+                          </p>
 
-              <div className="project-info">
+                        </div>
 
-                <h4>
-                  {isFreelancer
-                    ? "UI/UX Design Project"
-                    : "Brand Identity Design"}
-                </h4>
 
-                <p>
-                  {isFreelancer
-                    ? "Figma · UI Design"
-                    : "Logo · Branding · Design"}
-                </p>
+                        <div className="project-right">
 
-              </div>
+                          <strong>
+                            {projectProposals.length}{" "}
+                            {projectProposals.length === 1
+                              ? "proposal"
+                              : "proposals"}
+                          </strong>
 
-              <div className="project-right">
+                          <span
+                            className={
+                              projectAccepted
+                                ? "project-status"
+                                : "project-status pending"
+                            }
+                          >
+                            {projectAccepted
+                              ? "Accepted"
+                              : project.status ===
+                                  "in_progress"
+                                ? "In Progress"
+                                : "Reviewing"}
+                          </span>
 
-                <strong>
-                  {isFreelancer
-                    ? "$600 - $900"
-                    : "8 proposals"}
-                </strong>
+                        </div>
 
-                <span className="project-status pending">
-                  New
-                </span>
+                      </div>
 
-              </div>
+                    );
 
-            </div>
+                  })
+
+              ) : (
+
+                <div className="recommended-empty">
+
+                  <p>
+                    You have not posted any projects yet.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(
+                        "/dashboard/create-project"
+                      )
+                    }
+                  >
+                    Post Your First Project →
+                  </button>
+
+                </div>
+
+              )
+
+            )}
 
           </div>
 
 
           {/* =================================================
-              RIGHT - PROFILE
+              PROFILE CARD
           ================================================= */}
 
           <div className="dashboard-card profile-card">
@@ -515,6 +875,7 @@ const Dashboard: React.FC = () => {
             <div className="card-header">
 
               <div>
+
                 <span className="card-label">
                   PROFILE
                 </span>
@@ -522,36 +883,49 @@ const Dashboard: React.FC = () => {
                 <h3>
                   Profile Completion
                 </h3>
+
               </div>
 
               <span className="profile-percent">
-                75%
+                {profileCompletion}%
               </span>
 
             </div>
+
 
             <div className="progress-bar">
 
               <div
                 className="progress-value"
-                style={{ width: "75%" }}
+                style={{
+                  width: `${profileCompletion}%`
+                }}
               />
 
             </div>
 
+
             <p className="profile-message">
-              Complete your profile to attract
-              more opportunities.
+              {profileCompletion === 100
+                ? "Your profile is complete. Great job!"
+                : "Complete your profile to attract more opportunities."}
             </p>
+
 
             <button
               className="complete-profile"
+              type="button"
+              onClick={() => navigate("/profile")}
             >
-              Complete Profile →
+              {profileCompletion === 100
+                ? "View Profile →"
+                : "Complete Profile →"}
             </button>
 
           </div>
 
+
+          
 
         </section>
 
@@ -566,42 +940,83 @@ const Dashboard: React.FC = () => {
             QUICK ACTIONS
           </span>
 
+
           <div className="quick-actions-grid">
 
             {isFreelancer ? (
+
               <>
-                <button>
+
+                <button
+                  onClick={() =>
+                    navigate("/marketplace")
+                  }
+                >
                   <span>🔎</span>
                   Find Projects
                 </button>
 
-                <button>
+
+                <button
+                  onClick={() =>
+                    navigate(
+                      "/dashboard/proposals"
+                    )
+                  }
+                >
                   <span>📄</span>
                   View Proposals
                 </button>
 
-                <button>
+
+                <button
+                  onClick={() =>
+                    navigate("/messages")
+                  }
+                >
                   <span>💬</span>
                   Open Messages
                 </button>
+
               </>
+
             ) : (
+
               <>
-                <button>
+
+                <button
+                  onClick={() =>
+                    navigate(
+                      "/dashboard/create-project"
+                    )
+                  }
+                >
                   <span>➕</span>
                   Post a Project
                 </button>
 
-                <button>
+
+                <button
+                  onClick={() =>
+                    navigate("/freelancers")
+                  }
+                >
                   <span>👥</span>
                   Find Freelancers
                 </button>
 
-                <button>
+
+                <button
+                  onClick={() =>
+                    navigate("/messages")
+                  }
+                >
                   <span>💬</span>
                   Open Messages
                 </button>
+
               </>
+
             )}
 
           </div>

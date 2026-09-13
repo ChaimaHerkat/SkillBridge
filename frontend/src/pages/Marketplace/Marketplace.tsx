@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
 import useProjects from "../../hooks/useProjects";
 import type { Project } from "../../types/project";
+import { useAuth } from "../../context/AuthContext";
 import "./Marketplace.css";
 
 const categories = [
@@ -17,55 +16,76 @@ const categories = [
 
 const Marketplace: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const { projects, isLoading, error } = useProjects();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
+  // Handle "Post a Project" CTA
+  const handlePostProject = () => {
+    // User is not logged in
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Client can create a project
+    if (user.role === "CLIENT") {
+      navigate("/dashboard/create-project");
+      return;
+    }
+
+    // Freelancer
+    navigate("/dashboard");
+  };
+
+  // Filter projects based on search and category
+
   const filteredProjects = useMemo(() => {
-    const searchValue = search.toLowerCase().trim();
+  const searchValue = search.toLowerCase().trim();
 
-    return (projects || []).filter((project: Project) => {
-      const item = project as any;
+  return (projects || []).filter((project: Project) => {
+    const item = project as any;
 
-      const title =
-        item.title ||
-        item.name ||
-        "";
+    // Only show projects that are currently open
+    if (item.status !== "open") {
+      return false;
+    }
 
-      const description =
-        item.description ||
-        item.desc ||
-        "";
+    const title = String(item.title || item.name || "");
 
-      const projectCategory =
-        item.category ||
-        item.category_name ||
-        "";
+    const description = String(
+      item.description || item.desc || ""
+    );
 
-      const matchesSearch =
-        !searchValue ||
-        title.toLowerCase().includes(searchValue) ||
-        description.toLowerCase().includes(searchValue) ||
-        projectCategory.toLowerCase().includes(searchValue);
+    const projectCategory = String(
+      item.category || item.category_name || ""
+    );
 
-      const matchesCategory =
-        category === "All" ||
-        projectCategory.toLowerCase() === category.toLowerCase();
+    const matchesSearch =
+      !searchValue ||
+      title.toLowerCase().includes(searchValue) ||
+      description.toLowerCase().includes(searchValue) ||
+      projectCategory.toLowerCase().includes(searchValue);
 
-      return matchesSearch && matchesCategory;
-    });
+    const matchesCategory =
+      category === "All" ||
+      projectCategory.toLowerCase() === category.toLowerCase();
+
+    return matchesSearch && matchesCategory;
+  });
   }, [projects, search, category]);
 
   return (
     <div className="marketplace-page">
-      <Header />
-
       <main>
+
         {/* HERO */}
         <section className="marketplace-hero">
           <div className="marketplace-container">
+
             <div className="marketplace-heading">
               <span className="marketplace-label">
                 SKILLBRIDGE MARKETPLACE
@@ -74,20 +94,29 @@ const Marketplace: React.FC = () => {
               <h1>Find your next opportunity.</h1>
 
               <p>
-                Discover projects posted by clients and find opportunities
-                that match your skills, experience and goals.
+                Discover projects posted by clients and find
+                opportunities that match your skills, experience and
+                goals.
               </p>
             </div>
 
             {/* SEARCH */}
             <div className="marketplace-search-wrapper">
               <div className="marketplace-search">
-                <span className="marketplace-search-icon">⌕</span>
+
+                <span
+                  className="marketplace-search-icon"
+                  aria-hidden="true"
+                >
+                  ⌕
+                </span>
 
                 <input
                   type="search"
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) =>
+                    setSearch(event.target.value)
+                  }
                   placeholder="Search projects, skills or keywords..."
                   aria-label="Search projects"
                 />
@@ -102,6 +131,7 @@ const Marketplace: React.FC = () => {
                     ×
                   </button>
                 )}
+
               </div>
             </div>
 
@@ -133,39 +163,51 @@ const Marketplace: React.FC = () => {
                 </button>
               ))}
             </div>
+
           </div>
         </section>
 
         {/* PROJECTS */}
         <section className="marketplace-results">
           <div className="marketplace-container">
+
             <div className="marketplace-section-heading">
-              <div>
-                <span>OPPORTUNITIES</span>
-                <h2>Available projects</h2>
-                <p>
-                  Explore projects posted by clients looking for
-                  skilled professionals.
-                </p>
-              </div>
+              <span>OPPORTUNITIES</span>
+
+              <h2>Available projects</h2>
+
+              <p>
+                Explore projects posted by clients looking for
+                skilled professionals.
+              </p>
             </div>
 
+            {/* LOADING */}
             {isLoading ? (
               <div className="marketplace-state">
+
                 <div className="state-loader" />
+
                 <h2>Loading projects...</h2>
+
                 <p>
                   We are looking for opportunities that match your
                   skills.
                 </p>
+
               </div>
             ) : error ? (
+
+              /* ERROR */
               <div className="marketplace-state error-state">
+
                 <div className="state-icon">!</div>
 
                 <h2>Unable to load projects</h2>
 
-                <p>{error.message || "Something went wrong."}</p>
+                <p>
+                  {error.message || "Something went wrong."}
+                </p>
 
                 <button
                   type="button"
@@ -173,9 +215,13 @@ const Marketplace: React.FC = () => {
                 >
                   Try Again
                 </button>
+
               </div>
             ) : filteredProjects.length > 0 ? (
+
+              /* PROJECTS */
               <div className="projects-grid">
+
                 {filteredProjects.map((project: Project) => {
                   const item = project as any;
 
@@ -221,14 +267,18 @@ const Marketplace: React.FC = () => {
                       className="project-card"
                       key={id}
                     >
+
                       <div className="project-card-top">
+
                         <span className="project-category">
                           {projectCategory}
                         </span>
 
                         <span className="project-status">
+                          <span className="status-dot" />
                           Open
                         </span>
+
                       </div>
 
                       <h3>{title}</h3>
@@ -238,8 +288,10 @@ const Marketplace: React.FC = () => {
                       </p>
 
                       <div className="project-details">
+
                         <div>
                           <span>Budget</span>
+
                           <strong>
                             {Number.isNaN(budget)
                               ? `${budgetRaw} ${currency}`
@@ -249,8 +301,10 @@ const Marketplace: React.FC = () => {
 
                         <div>
                           <span>Duration</span>
+
                           <strong>{duration}</strong>
                         </div>
+
                       </div>
 
                       <button
@@ -261,14 +315,21 @@ const Marketplace: React.FC = () => {
                         }
                       >
                         View Project
-                        <span>→</span>
+                        <span aria-hidden="true">
+                          →
+                        </span>
                       </button>
+
                     </article>
                   );
                 })}
+
               </div>
             ) : (
+
+              /* EMPTY */
               <div className="marketplace-empty">
+
                 <div className="marketplace-empty-icon">
                   📂
                 </div>
@@ -297,14 +358,18 @@ const Marketplace: React.FC = () => {
                     Clear filters
                   </button>
                 )}
+
               </div>
             )}
+
           </div>
         </section>
 
         {/* CLIENT CTA */}
         <section className="marketplace-cta">
+
           <div className="marketplace-cta-inner">
+
             <span className="marketplace-label">
               FOR CLIENTS
             </span>
@@ -318,16 +383,18 @@ const Marketplace: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => navigate("/register")}
+              className="marketplace-cta-button"
+              onClick={handlePostProject}
             >
               Post a Project
               <span>→</span>
             </button>
-          </div>
-        </section>
-      </main>
 
-      <Footer />
+          </div>
+
+        </section>
+
+      </main>
     </div>
   );
 };

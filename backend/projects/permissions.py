@@ -13,9 +13,44 @@ class IsProjectOwner(permissions.BasePermission):
 
 
 class IsClientOrReadOnly(permissions.BasePermission):
-    """Permission to allow anyone to view, but only authenticated clients to create"""
+    """Allow everyone to view projects, but only CLIENT users to create them."""
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-        return request.user and request.user.is_authenticated
+
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.role == "CLIENT"
+        )
+
+
+class IsFreelancer(permissions.BasePermission):
+    """Allow access only to authenticated freelancers."""
+
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.role == "FREELANCER"
+        )
+
+
+class CanAccessProposal(permissions.BasePermission):
+    """
+    Allow a freelancer to access their own proposal
+    and a client to access proposals belonging to their projects.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        if request.user.role == "FREELANCER":
+            return obj.freelancer_id == request.user.id
+
+        if request.user.role == "CLIENT":
+            return obj.project.client_id == request.user.id
+
+        return False

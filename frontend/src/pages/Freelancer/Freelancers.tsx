@@ -1,7 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
 import "./Freelancer.css";
 
 interface Freelancer {
@@ -131,10 +129,13 @@ const Freelancers: React.FC = () => {
     });
   }, [search, category]);
 
+  const clearFilters = () => {
+    setSearch("");
+    setCategory("All");
+  };
+
   return (
     <div className="freelancers-page">
-      <Header />
-
       <main>
         {/* HERO */}
         <section className="freelancers-hero">
@@ -144,18 +145,23 @@ const Freelancers: React.FC = () => {
                 EXPLORE PROFESSIONALS
               </span>
 
-              <h1>Meet our freelancers</h1>
+              <h1>
+                Find the right
+                <span> talent for your project.</span>
+              </h1>
 
               <p>
-                Find experienced professionals ready to work on your
-                next idea and help turn your goals into reality.
+                Discover experienced professionals ready to bring your ideas
+                to life and help your business move forward.
               </p>
             </div>
 
             {/* SEARCH */}
             <div className="freelancers-search-wrapper">
               <div className="freelancers-search">
-                <span className="search-icon">⌕</span>
+                <span className="search-icon" aria-hidden="true">
+                  ⌕
+                </span>
 
                 <input
                   type="search"
@@ -178,13 +184,13 @@ const Freelancers: React.FC = () => {
               </div>
             </div>
 
-            {/* RESULT COUNT */}
+            {/* COUNT */}
             <div className="freelancers-count">
               <strong>{filteredFreelancers.length}</strong>
               <span>
                 {filteredFreelancers.length === 1
-                  ? "professional"
-                  : "professionals"}
+                  ? "professional available"
+                  : "professionals available"}
               </span>
             </div>
 
@@ -230,6 +236,7 @@ const Freelancers: React.FC = () => {
                           <span
                             className="availability-dot"
                             title="Available"
+                            aria-label="Available"
                           />
                         )}
                       </div>
@@ -241,7 +248,8 @@ const Freelancers: React.FC = () => {
                     </div>
 
                     <div className="verified-badge">
-                      ✓ Verified professional
+                      <span aria-hidden="true">✓</span>
+                      Verified professional
                     </div>
 
                     <p className="profile-description">
@@ -258,8 +266,9 @@ const Freelancers: React.FC = () => {
 
                     <div className="profile-bottom">
                       <div className="profile-rating">
-                        <span>★</span>
+                        <span aria-hidden="true">★</span>
                         <strong>{freelancer.rating}</strong>
+                        <small>rating</small>
                       </div>
 
                       <div className="profile-price">
@@ -276,14 +285,16 @@ const Freelancers: React.FC = () => {
                       }
                     >
                       View Profile
-                      <span>→</span>
+                      <span aria-hidden="true">→</span>
                     </button>
                   </article>
                 ))}
               </div>
             ) : (
               <div className="freelancers-empty">
-                <div className="empty-icon">⌕</div>
+                <div className="empty-icon" aria-hidden="true">
+                  ⌕
+                </div>
 
                 <h2>No professionals found</h2>
 
@@ -294,10 +305,7 @@ const Freelancers: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearch("");
-                    setCategory("All");
-                  }}
+                  onClick={clearFilters}
                 >
                   Clear filters
                 </button>
@@ -309,30 +317,32 @@ const Freelancers: React.FC = () => {
         {/* CTA */}
         <section className="freelancers-cta">
           <div className="freelancers-cta-inner">
-            <span className="freelancers-label">
-              FOR FREELANCERS
-            </span>
+            <div className="freelancers-cta-content">
+              <span className="freelancers-label">FOR FREELANCERS</span>
 
-            <h2>Turn your skills into new opportunities.</h2>
+              <h2>Ready to showcase your expertise?</h2>
 
-            <p>
-              Create your professional profile, showcase your expertise
-              and connect with clients looking for your skills.
-            </p>
+              <p>
+                Build your professional profile, highlight your skills and
+                connect with clients looking for talented people like you.
+              </p>
 
-            <button
-              type="button"
-              className="freelancers-cta-button"
-              onClick={() => navigate("/register")}
-            >
-              Join SkillBridge
-              <span>→</span>
-            </button>
+              <button
+                type="button"
+                className="freelancers-cta-button"
+                onClick={() => navigate("/register")}
+              >
+                Join SkillBridge
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+
+            <div className="freelancers-cta-decoration" aria-hidden="true">
+              <span>SB</span>
+            </div>
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 };

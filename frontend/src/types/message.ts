@@ -1,10 +1,10 @@
+
 export interface Message {
-  id: string;
-  senderId: string;
-  recipientId: string;
+  id: number;
+  senderId: number;
+  receiverId: number;
   content: string;
-  attachments?: string[];
-  createdAt: Date;
+  createdAt: string;
   read: boolean;
 }
 
@@ -12,5 +12,6 @@ export interface Conversation {
   id: string;
   participants: string[];
   lastMessage?: Message;
-  updatedAt: Date;
+  updatedAt: string;
 }
+

@@ -4,7 +4,7 @@ import type {User, AuthUser  }  from '../types/user'
 
 export const authService = {
   login: async (email: string, password: string): Promise<AuthUser> => {
-    const res = await apiCall('/auth/login', {
+    const res = await apiCall('/auth/login/', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     })
@@ -34,7 +34,7 @@ export const authService = {
     const normalizedRole = role === 'client' ? 'CLIENT' : 'FREELANCER'
 
     // register returns created user object; caller can login afterwards
-    return apiCall('/auth/register', {
+    return apiCall('/auth/register/', {
       method: 'POST',
       body: JSON.stringify({ email, password, firstName, lastName, role: normalizedRole }),
     })
