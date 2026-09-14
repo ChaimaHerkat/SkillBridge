@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 
 
-
 class Project(models.Model):
     class Status(models.TextChoices):
         OPEN = "open", "Open"
@@ -39,10 +38,8 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
-    
-    
-    
-    
+
+
 class Proposal(models.Model):
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
@@ -84,4 +81,4 @@ class Proposal(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.freelancer} → {self.project.title}"    
+        return f"{self.freelancer} → {self.project.title}"

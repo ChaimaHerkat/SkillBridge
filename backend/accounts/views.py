@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User
-from .serializers import RegisterSerializer, ProfileSerializer
+from .serializers import ProfileSerializer, RegisterSerializer
 
 
 def _generate_jwt_for_user(user: User) -> str:
@@ -78,8 +78,7 @@ class LoginView(APIView):
             )
 
         user = (
-            User.objects.filter(email=email).first()
-            or User.objects.filter(username=email).first()
+            User.objects.filter(email=email).first() or User.objects.filter(username=email).first()
         )
 
         if user is None or not user.is_active:
@@ -166,17 +165,13 @@ class UpdatePasswordView(APIView):
 
         if not current_password or not new_password:
             return Response(
-                {
-                    "detail": "Current password and new password are required."
-                },
+                {"detail": "Current password and new password are required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if not user.check_password(current_password):
             return Response(
-                {
-                    "detail": "Current password is incorrect."
-                },
+                {"detail": "Current password is incorrect."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -184,9 +179,7 @@ class UpdatePasswordView(APIView):
             validate_password(new_password, user=user)
         except ValidationError as error:
             return Response(
-                {
-                    "detail": list(error.messages)
-                },
+                {"detail": list(error.messages)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -196,9 +189,6 @@ class UpdatePasswordView(APIView):
         update_session_auth_hash(request, user)
 
         return Response(
-            {
-                "message": "Password updated successfully."
-            },
+            {"message": "Password updated successfully."},
             status=status.HTTP_200_OK,
         )
-

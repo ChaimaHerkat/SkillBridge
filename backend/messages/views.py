@@ -1,9 +1,7 @@
 import jwt
-
 from django.conf import settings
-from django.db.models import Q
 from django.contrib.auth import get_user_model
-
+from django.db.models import Q
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,7 +9,6 @@ from rest_framework.views import APIView
 
 from .models import Message
 from .serializers import MessageSerializer
-
 
 User = get_user_model()
 
@@ -58,6 +55,7 @@ def get_current_user_id(request):
         print("JWT ERROR:", repr(e))
         return None
 
+
 class MessageListCreateView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
@@ -83,10 +81,8 @@ class MessageListCreateView(generics.ListCreateAPIView):
             ).order_by("created_at")
 
         return Message.objects.filter(
-            Q(sender_id=current_user_id)
-            | Q(recipient_id=current_user_id)
+            Q(sender_id=current_user_id) | Q(recipient_id=current_user_id)
         ).order_by("created_at")
-
 
     def create(self, request, *args, **kwargs):
         print("🔥 CREATE MESSAGE CALLED")
@@ -120,9 +116,6 @@ class MessageListCreateView(generics.ListCreateAPIView):
         )
 
 
-
-
-
 class ConversationListView(APIView):
     """
     Return all real conversations of the authenticated user.
@@ -140,10 +133,7 @@ class ConversationListView(APIView):
             )
 
         messages = (
-            Message.objects.filter(
-                Q(sender_id=current_user_id)
-                | Q(recipient_id=current_user_id)
-            )
+            Message.objects.filter(Q(sender_id=current_user_id) | Q(recipient_id=current_user_id))
             .select_related("sender", "recipient")
             .order_by("-created_at")
         )
@@ -174,9 +164,8 @@ class ConversationListView(APIView):
                 recipient_id=current_user_id,
                 read=False,
             ).count()
-            
+
             print("UNREAD COUNT:", unread_count)
-            
 
             first_name = getattr(other_user, "firstName", None)
             if first_name is None:
@@ -211,8 +200,8 @@ class ConversationListView(APIView):
             )
 
         return Response(result)
-    
-    
+
+
 class MarkConversationReadView(APIView):
     """
     Mark all incoming messages from one user as read.
@@ -242,10 +231,8 @@ class MarkConversationReadView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-    
-    
-    
-    
+
+
 class UserSearchView(APIView):
     """
     Search clients and freelancers to start a new conversation.
@@ -263,19 +250,18 @@ class UserSearchView(APIView):
             )
 
         query = request.query_params.get("q", "").strip()
-        
+
         print("SEARCH QUERY:", query)
         print("CURRENT USER ID:", current_user_id)
-        print("ALL USERS:", list(
-           User.objects.values("id", "firstName", "lastName", "email", "role")
-        ))
+        print(
+            "ALL USERS:", list(User.objects.values("id", "firstName", "lastName", "email", "role"))
+        )
 
         if not query:
             return Response([])
 
         users = (
-            User.objects
-            .exclude(id=current_user_id)
+            User.objects.exclude(id=current_user_id)
             .filter(
                 Q(firstName__icontains=query)
                 | Q(lastName__icontains=query)
@@ -285,10 +271,7 @@ class UserSearchView(APIView):
             .order_by("firstName", "lastName")[:10]
         )
 
-
-        print("SEARCH RESULTS:", list(
-          users.values("id", "firstName", "lastName", "email", "role")
-        ))
+        print("SEARCH RESULTS:", list(users.values("id", "firstName", "lastName", "email", "role")))
 
         result = []
 

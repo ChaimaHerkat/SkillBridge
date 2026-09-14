@@ -4,14 +4,12 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 
 from .models import Project, Proposal
-
 from .permissions import (
     CanAccessProposal,
     IsClientOrReadOnly,
     IsFreelancer,
     IsProjectOwner,
 )
-
 from .serializers import ProjectSerializer, ProposalSerializer
 
 
@@ -49,11 +47,7 @@ class ProjectListCreateView(generics.ListCreateAPIView):
                 pass
 
         if search:
-            qs = qs.filter(
-                title__icontains=search
-            ) | qs.filter(
-                description__icontains=search
-            )
+            qs = qs.filter(title__icontains=search) | qs.filter(description__icontains=search)
 
         return qs
 
@@ -61,11 +55,7 @@ class ProjectListCreateView(generics.ListCreateAPIView):
         # Use request.user from JWTAuthentication
         data = request.data.copy()
 
-        if (
-            request.user
-            and request.user.is_authenticated
-            and not data.get("client")
-        ):
+        if request.user and request.user.is_authenticated and not data.get("client"):
             data["client"] = request.user.id
 
         serializer = self.get_serializer(data=data)
@@ -107,17 +97,13 @@ class ProposalListCreateView(generics.ListCreateAPIView):
         user = self.request.user
 
         if user.role == "FREELANCER":
-            return Proposal.objects.filter(
-                freelancer=user
-            ).select_related(
+            return Proposal.objects.filter(freelancer=user).select_related(
                 "project",
                 "freelancer",
             )
 
         if user.role == "CLIENT":
-            return Proposal.objects.filter(
-                project__client=user
-            ).select_related(
+            return Proposal.objects.filter(project__client=user).select_related(
                 "project",
                 "freelancer",
             )
@@ -132,12 +118,7 @@ class ProposalListCreateView(generics.ListCreateAPIView):
         # to their own project.
         if project.client_id == freelancer.id:
             raise ValidationError(
-                {
-                    "project": (
-                        "You cannot submit a proposal "
-                        "to your own project."
-                    )
-                }
+                {"project": ("You cannot submit a proposal " "to your own project.")}
             )
 
         # Prevent multiple pending proposals
@@ -150,12 +131,7 @@ class ProposalListCreateView(generics.ListCreateAPIView):
 
         if existing_proposal:
             raise ValidationError(
-                {
-                    "project": (
-                        "You already have a pending proposal "
-                        "for this project."
-                    )
-                }
+                {"project": ("You already have a pending proposal " "for this project.")}
             )
 
         serializer.save(freelancer=freelancer)
@@ -173,7 +149,8 @@ class ProposalDetailView(generics.RetrieveUpdateDestroyAPIView):
             "project",
             "freelancer",
         )
-        
+
+
 class ProposalAcceptView(generics.GenericAPIView):
     serializer_class = ProposalSerializer
     permission_classes = [IsAuthenticated]
@@ -191,10 +168,7 @@ class ProposalAcceptView(generics.GenericAPIView):
             )
 
         # Only the project owner (client) can accept a proposal.
-        if (
-            request.user.role != "CLIENT"
-            or proposal.project.client_id != request.user.id
-        ):
+        if request.user.role != "CLIENT" or proposal.project.client_id != request.user.id:
             return Response(
                 {"detail": "You do not have permission to accept this proposal."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -221,9 +195,7 @@ class ProposalAcceptView(generics.GenericAPIView):
         Proposal.objects.filter(
             project=project,
             status=Proposal.Status.PENDING,
-        ).exclude(
-            id=proposal.id
-        ).update(
+        ).exclude(id=proposal.id).update(
             status=Proposal.Status.REJECTED,
         )
 
@@ -250,10 +222,7 @@ class ProposalRejectView(generics.GenericAPIView):
             )
 
         # Only the project owner (client) can reject a proposal.
-        if (
-            request.user.role != "CLIENT"
-            or proposal.project.client_id != request.user.id
-        ):
+        if request.user.role != "CLIENT" or proposal.project.client_id != request.user.id:
             return Response(
                 {"detail": "You do not have permission to reject this proposal."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -272,4 +241,4 @@ class ProposalRejectView(generics.GenericAPIView):
         return Response(
             ProposalSerializer(proposal).data,
             status=status.HTTP_200_OK,
-        )        
+        )

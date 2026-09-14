@@ -19,22 +19,14 @@ class IsClientOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return (
-            request.user
-            and request.user.is_authenticated
-            and request.user.role == "CLIENT"
-        )
+        return request.user and request.user.is_authenticated and request.user.role == "CLIENT"
 
 
 class IsFreelancer(permissions.BasePermission):
     """Allow access only to authenticated freelancers."""
 
     def has_permission(self, request, view):
-        return (
-            request.user
-            and request.user.is_authenticated
-            and request.user.role == "FREELANCER"
-        )
+        return request.user and request.user.is_authenticated and request.user.role == "FREELANCER"
 
 
 class CanAccessProposal(permissions.BasePermission):

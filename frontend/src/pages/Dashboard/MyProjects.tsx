@@ -89,11 +89,7 @@ function MyProjects() {
    projects.map((project) => Number(project.id))
   );
 
-  const acceptedProposals = proposals.filter(
-   (proposal) =>
-    myProjectIds.has(Number(proposal.project)) &&
-    String(proposal.status).toLowerCase() === "accepted"
-  ).length;
+ 
 
   const acceptedProposalValue = proposals
    .filter(
