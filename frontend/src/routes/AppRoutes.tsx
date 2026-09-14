@@ -24,10 +24,15 @@ import Proposals from "../pages/Dashboard/Proposals";
 
 import MyProfile from "../pages/Dashboard/MyProfile";
 
+import Settings from "../pages/Dashboard/Settings";
+
+import SavedJobs from "../pages/Dashboard/SavedJobs";
+
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 
 import ProtectedRoute from "../components/ProtectedRoute";
+
 
 function AppRoutes() {
   return (
@@ -102,6 +107,22 @@ function AppRoutes() {
       />
 
 
+
+      <Route
+        path="/dashboard/saved-jobs"
+        element={
+         <ProtectedRoute>
+           <>
+            <Header />
+            <SavedJobs />
+            <Footer />
+           </>
+         </ProtectedRoute>
+        }
+      />
+
+
+
       <Route
         path="/dashboard/projects/:id/proposals"
         element={
@@ -132,8 +153,16 @@ function AppRoutes() {
       />
 
       <Route
-         path="/dashboard/proposals"
-          element={<Proposals />}
+        path="/dashboard/proposals"
+        element={
+         <ProtectedRoute>
+           <>
+             <Header />
+             <Proposals />
+             <Footer />
+           </>
+         </ProtectedRoute>
+        }
       />
 
       <Route
@@ -201,6 +230,22 @@ function AppRoutes() {
           </>
         }
       />
+
+      {/* ==================== Settings ==================== */}
+
+      <Route
+        path="/dashboard/settings"
+        element={
+          <ProtectedRoute>
+            <>
+             <Header />
+             <Settings />
+             <Footer />
+            </>
+          </ProtectedRoute>
+        }
+      />
+
     </Routes>
   );
 

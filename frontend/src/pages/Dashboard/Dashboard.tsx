@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
 
                 <button
                   className="dashboard-nav-item"
-                  onClick={() => navigate("/marketplace")}
+                  onClick={() => navigate("/dashboard/saved-jobs")}
                 >
                   <span>🔖</span>
                      Saved Jobs
@@ -327,7 +327,10 @@ const Dashboard: React.FC = () => {
                  My Profile
             </button>
 
-            <button className="dashboard-nav-item">
+            <button 
+              className="dashboard-nav-item"
+              onClick={() => navigate("/dashboard/settings")}
+            >
               <span>⚙</span>
               Settings
             </button>
@@ -915,7 +918,7 @@ const Dashboard: React.FC = () => {
             <button
               className="complete-profile"
               type="button"
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate("/dashboard/profile")}
             >
               {profileCompletion === 100
                 ? "View Profile →"

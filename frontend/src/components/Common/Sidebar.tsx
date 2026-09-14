@@ -44,24 +44,29 @@ const Sidebar: React.FC = () => {
 
     freelancer: [
       {
-        path: '/dashboard',
-        label: 'Dashboard',
-        icon: '📊',
+       path: '/dashboard',
+       label: 'Dashboard',
+       icon: '📊',
+      }, 
+      {
+       path: '/dashboard/my-projects',
+       label: 'My Projects',
+       icon: '💼',
       },
       {
-        path: '/dashboard/my-projects',
-        label: 'My Projects',
-        icon: '💼',
+       path: '/dashboard/proposals',
+       label: 'My Proposals',
+       icon: '📨',
       },
       {
-        path: '/dashboard/proposals',
-        label: 'My Proposals',
-        icon: '📨',
+       path: '/dashboard/saved-jobs',
+       label: 'Saved Jobs',
+       icon: '🔖',
       },
       {
-        path: '/messages',
-        label: 'Messages',
-        icon: '💬',
+       path: '/messages',
+       label: 'Messages',
+       icon: '💬',
       },
     ],
 

@@ -83,10 +83,29 @@ function MyProjects() {
     (project) => project.status === "completed"
   ).length;
 
+  
+
+  const myProjectIds = new Set(
+   projects.map((project) => Number(project.id))
+  );
+
   const acceptedProposals = proposals.filter(
-    (proposal) =>
-      String(proposal.status).toLowerCase() === "accepted"
+   (proposal) =>
+    myProjectIds.has(Number(proposal.project)) &&
+    String(proposal.status).toLowerCase() === "accepted"
   ).length;
+
+  const acceptedProposalValue = proposals
+   .filter(
+     (proposal) =>
+       myProjectIds.has(Number(proposal.project)) &&
+       String(proposal.status).toLowerCase() === "accepted"
+   )
+   .reduce(
+     (total, proposal) =>
+       total + Number(proposal.proposed_budget || 0),
+     0
+    );
 
   const getStatusLabel = (status: Project["status"]) => {
     switch (status) {
@@ -182,7 +201,7 @@ function MyProjects() {
 
                 <div>
                   <span>Accepted Proposals</span>
-                  <strong>{acceptedProposals}</strong>
+                  <strong>{acceptedProposalValue}</strong>
                 </div>
               </div>
 

@@ -2,22 +2,35 @@ from datetime import datetime, timedelta
 
 import jwt
 from django.conf import settings
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, ProfileSerializer
 
 
 def _generate_jwt_for_user(user: User) -> str:
     exp = datetime.utcnow() + timedelta(days=7)
-    payload = {"user_id": user.id, "exp": exp}
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-    # jwt.encode returns bytes on some PyJWT versions; ensure str
+
+    payload = {
+        "user_id": user.id,
+        "exp": exp,
+    }
+
+    token = jwt.encode(
+        payload,
+        settings.SECRET_KEY,
+        algorithm="HS256",
+    )
+
     if isinstance(token, bytes):
         token = token.decode("utf-8")
+
     return token
 
 
@@ -45,7 +58,10 @@ class RegisterView(APIView):
                 status=status.HTTP_201_CREATED,
             )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class LoginView(APIView):
@@ -61,19 +77,22 @@ class LoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Look up user by email first, then by username (email is used as username on register)
         user = (
             User.objects.filter(email=email).first()
             or User.objects.filter(username=email).first()
         )
 
         if user is None or not user.is_active:
-            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Invalid credentials"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
-        # Use check_password() directly — avoids Django auth-backend overhead
-        # and works correctly with our custom User model.
         if not user.check_password(password):
-            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Invalid credentials"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         token = _generate_jwt_for_user(user)
 
@@ -96,8 +115,8 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Use request.user which is already populated by JWTAuthentication
         user = request.user
+
         return Response(
             {
                 "id": user.id,
@@ -108,3 +127,78 @@ class MeView(APIView):
                 "role": user.role,
             }
         )
+
+
+class UpdateProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+
+        serializer = ProfileSerializer(
+            user,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class UpdatePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+
+        current_password = request.data.get("current_password")
+        new_password = request.data.get("new_password")
+
+        if not current_password or not new_password:
+            return Response(
+                {
+                    "detail": "Current password and new password are required."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not user.check_password(current_password):
+            return Response(
+                {
+                    "detail": "Current password is incorrect."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError as error:
+            return Response(
+                {
+                    "detail": list(error.messages)
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        update_session_auth_hash(request, user)
+
+        return Response(
+            {
+                "message": "Password updated successfully."
+            },
+            status=status.HTTP_200_OK,
+        )
+

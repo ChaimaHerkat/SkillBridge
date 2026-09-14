@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useProjects from "../../hooks/useProjects";
 import type { Project } from "../../types/project";
 import { useAuth } from "../../context/AuthContext";
+import useSavedProjects from "../../hooks/useSavedProjects";
 import "./Marketplace.css";
 
 const categories = [
@@ -19,6 +20,11 @@ const Marketplace: React.FC = () => {
   const { user } = useAuth();
 
   const { projects, isLoading, error } = useProjects();
+
+  const {
+  isSaved,
+  toggleSaved,
+} = useSavedProjects();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -307,19 +313,31 @@ const Marketplace: React.FC = () => {
 
                       </div>
 
-                      <button
-                        type="button"
-                        className="project-button"
-                        onClick={() =>
-                          navigate(`/marketplace/${id}`)
-                        }
-                      >
-                        View Project
-                        <span aria-hidden="true">
-                          →
-                        </span>
-                      </button>
-
+                      
+                      <div className="project-card-actions">
+                         <button
+                           type="button"
+                           className="project-button"
+                           onClick={() => navigate(`/marketplace/${id}`)}
+                          >
+                            View Project <span aria-hidden="true">→</span>
+                          </button>
+ 
+                          <button
+                            type="button"
+                            className={`save-project-button ${
+                             isSaved(id) ? "saved" : ""
+                             }`}
+                            onClick={() => toggleSaved(id)}
+                            aria-label={
+                             isSaved(id)
+                               ? "Remove project from saved jobs"
+                               : "Save project"
+                            }
+                          >
+                            {isSaved(id) ? "🔖 Saved" : "🔖 Save"}
+                         </button>
+                      </div>
                     </article>
                   );
                 })}

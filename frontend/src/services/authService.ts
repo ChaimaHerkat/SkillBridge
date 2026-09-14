@@ -49,12 +49,26 @@ export const authService = {
     return apiCall('/auth/me')
   },
 
-  updateProfile: async (userId: string, data: Partial<User>): Promise<User> => {
-    return apiCall(`/users/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
+  updateProfile: async (data: Partial<User>): Promise<User> => {
+  return apiCall("/auth/profile/", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
   },
+
+  updatePassword: async (
+  currentPassword: string,
+  newPassword: string
+   ): Promise<{ message: string }> => {
+     return apiCall("/auth/password/", {
+        method: "PUT",
+        body: JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword,
+        }),
+      });
+  },
+
 }
 
 export default authService

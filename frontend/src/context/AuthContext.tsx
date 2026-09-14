@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  updateUser: (data: Partial<User>) => Promise<void>;
 
   login: (
     email: string,
@@ -127,6 +128,23 @@ export const AuthProvider = ({
     }
   };
 
+
+/* =====================================================
+   Update profile / User
+===================================================== */
+  const updateUser = async (data: Partial<User>): Promise<void> => {
+  setIsLoading(true);
+
+  try {
+    const updatedUser = await authService.updateProfile(data);
+
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  } finally {
+    setIsLoading(false);
+  }
+  };
+
   /* =====================================================
      LOGOUT
   ===================================================== */
@@ -146,18 +164,14 @@ export const AuthProvider = ({
   return (
     <AuthContext.Provider
       value={{
-        user,
-
-        isLoading,
-
-        isAuthenticated: !!user,
-
-        login,
-
-        register,
-
-        logout,
-      }}
+       user,
+       isLoading,
+       isAuthenticated: !!user,
+       login,
+       register,
+       updateUser,
+       logout,
+   }}
     >
       {children}
     </AuthContext.Provider>
