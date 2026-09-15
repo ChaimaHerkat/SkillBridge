@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import projectService from "../../services/projectService";
+import type { Project } from "../../types/project";
 import "./MyProfile.css";
 
 type ProfileTab = "about" | "skills" | "projects";
@@ -10,6 +12,41 @@ function MyProfile() {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("about");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(false);
+  const [projectsError, setProjectsError] = useState("");
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const loadProjects = async () => {
+      setProjectsLoading(true);
+      setProjectsError("");
+
+      try {
+        const allProjects = await projectService.getProjects();
+
+        const userProjects = allProjects.filter((project) => {
+          if (user.role === "CLIENT") {
+            return String(project.client) === String(user.id);
+          }
+
+          return String(project.freelancer) === String(user.id);
+        });
+
+        setProjects(userProjects);
+      } catch (error) {
+        console.error("Failed to load profile projects:", error);
+        setProjectsError("Unable to load your projects.");
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, [user]);
 
   if (!user) {
     return (
@@ -40,17 +77,19 @@ function MyProfile() {
       })
     : "Active member";
 
+  /*
+   * These are the profile fields currently supported reliably
+   * by the backend user model.
+   */
   const profileCompletion = [
     Boolean(user.firstName),
     Boolean(user.lastName),
     Boolean(user.username),
     Boolean(user.email),
-    Boolean(user.bio),
-    Boolean(user.avatar),
   ].filter(Boolean).length;
 
   const profileCompletionPercentage = Math.round(
-    (profileCompletion / 6) * 100
+    (profileCompletion / 4) * 100
   );
 
   const tabs: { id: ProfileTab; label: string }[] = [
@@ -78,6 +117,10 @@ function MyProfile() {
 
   const handlePostProject = () => {
     navigate("/dashboard/create-project");
+  };
+
+  const handleViewProject = (projectId: number) => {
+    navigate(`/marketplace/${projectId}`);
   };
 
   return (
@@ -196,6 +239,9 @@ function MyProfile() {
               MAIN CONTENT
           ========================= */}
           <section className="profile-main-card">
+            {/* =========================
+                ABOUT
+            ========================= */}
             {activeTab === "about" && (
               <div className="tab-content">
                 <span className="sub-title">PROFILE OVERVIEW</span>
@@ -254,6 +300,9 @@ function MyProfile() {
               </div>
             )}
 
+            {/* =========================
+                SKILLS
+            ========================= */}
             {activeTab === "skills" && (
               <div className="tab-content">
                 <span className="sub-title">EXPERTISE</span>
@@ -276,8 +325,8 @@ function MyProfile() {
                   <h3>No skills added yet</h3>
 
                   <p>
-                    Your skills will appear here once you add them to
-                    your profile.
+                    Skills management will be available once skill
+                    information is connected to your profile.
                   </p>
 
                   <button
@@ -285,15 +334,18 @@ function MyProfile() {
                     type="button"
                     onClick={handleEditProfile}
                   >
-                    Add skills
+                    Edit profile
                   </button>
                 </div>
               </div>
             )}
 
+            {/* =========================
+                PROJECTS
+            ========================= */}
             {activeTab === "projects" && (
               <div className="tab-content">
-                <span className="sub-title">PORTFOLIO</span>
+                <span className="sub-title">PROJECTS</span>
 
                 <h2 className="main-title">
                   {isFreelancer ? "My projects" : "Posted projects"}
@@ -301,35 +353,118 @@ function MyProfile() {
 
                 <p className="body-text">
                   {isFreelancer
-                    ? "Showcase the projects you have completed and the experience you have gained."
-                    : "Manage the projects you have posted and follow their progress from your dashboard."}
+                    ? "Projects assigned to you will appear here."
+                    : "Projects created by you will appear here."}
                 </p>
 
-                <div className="empty-state-box">
-                  <div className="folder-icon">📁</div>
+                {projectsLoading && (
+                  <div className="empty-state-box">
+                    <div className="folder-icon">📁</div>
 
-                  <h3 className="empty-title">
-                    {isFreelancer
-                      ? "Your projects will appear here"
-                      : "Your posted projects will appear here"}
-                  </h3>
+                    <h3 className="empty-title">
+                      Loading projects...
+                    </h3>
 
-                  <p className="empty-text">
-                    {isFreelancer
-                      ? "Completed projects can be displayed here to help clients discover your experience."
-                      : "Create your first project on SkillBridge to start receiving proposals from freelancers."}
-                  </p>
+                    <p className="empty-text">
+                      Please wait while we load your projects.
+                    </p>
+                  </div>
+                )}
 
-                  {!isFreelancer && (
-                    <button
-                      className="btn btn-blue"
-                      type="button"
-                      onClick={handlePostProject}
-                    >
-                      Post a project
-                    </button>
+                {!projectsLoading && projectsError && (
+                  <div className="empty-state-box">
+                    <div className="folder-icon">⚠</div>
+
+                    <h3 className="empty-title">
+                      Unable to load projects
+                    </h3>
+
+                    <p className="empty-text">{projectsError}</p>
+                  </div>
+                )}
+
+                {!projectsLoading &&
+                  !projectsError &&
+                  projects.length === 0 && (
+                    <div className="empty-state-box">
+                      <div className="folder-icon">📁</div>
+
+                      <h3 className="empty-title">
+                        {isFreelancer
+                          ? "No projects assigned yet"
+                          : "No projects posted yet"}
+                      </h3>
+
+                      <p className="empty-text">
+                        {isFreelancer
+                          ? "Projects assigned to you will appear here after a client accepts your proposal."
+                          : "Create your first project on SkillBridge to start receiving proposals from freelancers."}
+                      </p>
+
+                      {!isFreelancer && (
+                        <button
+                          className="btn btn-blue"
+                          type="button"
+                          onClick={handlePostProject}
+                        >
+                          Post a project
+                        </button>
+                      )}
+                    </div>
                   )}
-                </div>
+
+                {!projectsLoading &&
+                  !projectsError &&
+                  projects.length > 0 && (
+                    <div className="profile-projects-list">
+                      {projects.map((project) => (
+                        <article
+                          key={project.id}
+                          className="profile-project-card"
+                        >
+                          <div className="profile-project-main">
+                            <span className="profile-project-category">
+                              {project.category || "Project"}
+                            </span>
+
+                            <h3>{project.title}</h3>
+
+                            <p>
+                              {project.description.length > 180
+                                ? `${project.description.slice(0, 180)}...`
+                                : project.description}
+                            </p>
+                          </div>
+
+                          <div className="profile-project-meta">
+                            <span>
+                              Status:{" "}
+                              <strong>
+                                {project.status.replace("_", " ")}
+                              </strong>
+                            </span>
+
+                            <span>
+                              Budget:{" "}
+                              <strong>
+                                {project.budget} {project.currency}
+                              </strong>
+                            </span>
+
+                            <button
+                              className="btn btn-outline"
+                              type="button"
+                              onClick={() =>
+                                handleViewProject(Number(project.id))
+                              }
+                            >
+                              View project
+                            </button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
               </div>
             )}
           </section>
@@ -340,9 +475,7 @@ function MyProfile() {
           <aside className="profile-sidebar">
             {/* Mini profile */}
             <section className="side-card side-user-card">
-              <div className="mini-avatar">
-                {initials}
-              </div>
+              <div className="mini-avatar">{initials}</div>
 
               <div className="side-user-info">
                 <strong className="side-user-name">
@@ -418,9 +551,7 @@ function MyProfile() {
               <div className="strength-row">
                 <span>Profile completion</span>
 
-                <strong>
-                  {profileCompletionPercentage}%
-                </strong>
+                <strong>{profileCompletionPercentage}%</strong>
               </div>
 
               <div className="progress-bg">
@@ -434,8 +565,8 @@ function MyProfile() {
 
               <p className="side-hint">
                 {user.bio
-                  ? "Your introduction is already added. Add skills and projects to make your profile stronger."
-                  : "Add a bio, skills and projects to make your profile more complete."}
+                  ? "Your introduction is already added. Complete the rest of your profile to make it stronger."
+                  : "Add a bio and complete your profile information to make your profile stronger."}
               </p>
             </section>
 

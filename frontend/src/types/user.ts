@@ -4,12 +4,20 @@ export interface User {
   email: string
   firstName: string
   lastName: string
+
   avatar?: string
   bio?: string
+  phone?: string
+  location?: string
+  website?: string
+
   role: 'CLIENT' | 'FREELANCER'
+
   createdAt?: string | Date
   updatedAt?: string | Date
 }
+
+
 
 export interface AuthUser extends User {
   token: string

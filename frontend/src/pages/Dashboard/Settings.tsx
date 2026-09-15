@@ -1,202 +1,352 @@
-import React, { useEffect, useState } from 'react';
-import './Settings.css';
-import { useAuth } from '../../context/AuthContext';
-import authService from '../../services/authService';
+import React, { useEffect, useState } from "react";
+import "./Settings.css";
+import { useAuth } from "../../context/AuthContext";
+import authService from "../../services/authService";
 
-type TabType = 'profile' | 'security' | 'notifications' | 'billing';
+type TabType = "profile" | "security" | "notifications" | "billing";
 
-export const Settings: React.FC = () => {
-  const { user, updateUser } = useAuth();
+type NotificationPreferences = {
+  emailMessages: boolean;
+  emailProjects: boolean;
+  emailMarketing: boolean;
+  browserAlerts: boolean;
+};
 
-  const [activeTab, setActiveTab] = useState<TabType>('profile');
-  const [saveSuccess, setSaveSuccess] = useState(false);
+const NOTIFICATIONS_STORAGE_KEY =
+  "skillbridge_notification_preferences";
 
-  // Password visibility states
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // Password form
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordSuccess, setPasswordSuccess] = useState('');
-  const [passwordLoading, setPasswordLoading] = useState(false);
-
-  // Profile form
-  const [profileData, setProfileData] = useState({
-    fullName: user ? `${user.firstName} ${user.lastName}` : '',
-    username: user?.username || '',
-    email: user?.email || '',
-    phone: '',
-    bio: '',
-    location: '',
-    website: '',
-  });
-
-  // Notification settings
-  // Notification settings
-const NOTIFICATIONS_STORAGE_KEY = 'skillbridge_notification_preferences';
-
-const defaultNotifications = {
+const DEFAULT_NOTIFICATIONS: NotificationPreferences = {
   emailMessages: true,
   emailProjects: true,
   emailMarketing: false,
   browserAlerts: true,
 };
 
+export const Settings: React.FC = () => {
+  const { user, updateUser } = useAuth();
 
+  const [activeTab, setActiveTab] = useState<TabType>("profile");
 
-useEffect(() => {
-  try {
-    const savedNotifications = localStorage.getItem(
-      NOTIFICATIONS_STORAGE_KEY
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  // ============================================================
+  // PASSWORD VISIBILITY
+  // ============================================================
+
+  const [showCurrentPassword, setShowCurrentPassword] =
+    useState(false);
+
+  const [showNewPassword, setShowNewPassword] =
+    useState(false);
+
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
+
+  // ============================================================
+  // PASSWORD FORM
+  // ============================================================
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  // ============================================================
+  // PROFILE FORM
+  // ============================================================
+
+  const [profileData, setProfileData] = useState({
+    fullName: "",
+    username: "",
+    email: "",
+    phone: "",
+    bio: "",
+    location: "",
+    website: "",
+  });
+
+  // ============================================================
+  // NOTIFICATIONS
+  // ============================================================
+
+  const [notifications, setNotifications] =
+    useState<NotificationPreferences>(
+      DEFAULT_NOTIFICATIONS
     );
 
-    if (savedNotifications) {
-      const parsed = JSON.parse(savedNotifications);
+  // ============================================================
+  // LOAD USER DATA INTO FORM
+  // ============================================================
 
-      setNotifications({
-        ...defaultNotifications,
-        ...parsed,
-      });
+  useEffect(() => {
+    if (!user) {
+      return;
     }
-  } catch (error) {
-    console.error(
-      'Failed to load notification preferences:',
-      error
-    );
-  }
-}, []);
 
-  const [notifications, setNotifications] = useState(
-    defaultNotifications
-  );
+    setProfileData({
+      fullName:
+        `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+      username: user.username || "",
+      email: user.email || "",
+      phone: "",
+      bio: user.bio || "",
+      location: "",
+      website: "",
+    });
+  }, [user]);
 
-  // Save profile
+  // ============================================================
+  // LOAD NOTIFICATION PREFERENCES
+  // ============================================================
+
+  useEffect(() => {
+   if (!user) {
+    return;
+   }
+
+   setProfileData({
+    fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+    username: user.username || "",
+    email: user.email || "",
+    phone: user.phone || "",
+    bio: user.bio || "",
+    location: user.location || "",
+    website: user.website || "",
+   });
+}, [user]);
+
+
+
+  // ============================================================
+  // PROFILE - SAVE
+  // ============================================================
+
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const nameParts = profileData.fullName.trim().split(/\s+/);
-
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-
-      await updateUser({
-        firstName,
-        lastName,
-        email: profileData.email,
-      });
-
-      setSaveSuccess(true);
-
-      setTimeout(() => {
-        setSaveSuccess(false);
-      }, 3000);
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-    }
-  };
-
-  /// Update password
-const handlePasswordUpdate = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  setPasswordError('');
-  setPasswordSuccess('');
-
-  // Check required fields
-  if (!currentPassword || !newPassword || !confirmPassword) {
-    setPasswordError('Please fill in all password fields.');
+  if (!user) {
     return;
   }
 
-  // Check new password confirmation
-  if (newPassword !== confirmPassword) {
-    setPasswordError('New password and confirmation do not match.');
-    return;
-  }
-
-  // Prevent using the same password
-  if (currentPassword === newPassword) {
-    setPasswordError(
-      'The new password must be different from your current password.'
-    );
-    return;
-  }
-
-  setPasswordLoading(true);
+  setProfileError("");
+  setSaveSuccess(false);
+  setProfileLoading(true);
 
   try {
-    const response = await authService.updatePassword(
-      currentPassword,
-      newPassword
-    );
+    const nameParts = profileData.fullName
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
 
-    setPasswordSuccess(
-      response?.message || 'Password updated successfully.'
-    );
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ");
+    const email = profileData.email.trim();
 
-    // Clear fields after successful update
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-
-    // Hide success message after 4 seconds
-    setTimeout(() => {
-      setPasswordSuccess('');
-    }, 4000);
-  } catch (error: any) {
-    console.error('Failed to update password:', error);
-
-    let message = 'Failed to update password. Please try again.';
-
-    const errorBody = error?.body;
-
-    if (errorBody?.detail) {
-      if (Array.isArray(errorBody.detail)) {
-        message = errorBody.detail.join(' ');
-      } else {
-        message = String(errorBody.detail);
-      }
-    } else if (error?.message) {
-      message = error.message;
+    if (!firstName) {
+      setProfileError("Please enter your full name.");
+      setProfileLoading(false);
+      return;
     }
 
-    setPasswordError(message);
-  } finally {
-    setPasswordLoading(false);
-  }
-};
+    if (!email) {
+      setProfileError("Please enter your email address.");
+      setProfileLoading(false);
+      return;
+    }
 
-const handleSaveNotifications = () => {
-  try {
-    localStorage.setItem(
-      NOTIFICATIONS_STORAGE_KEY,
-      JSON.stringify(notifications)
-    );
+    await updateUser({
+      firstName,
+      lastName,
+      email,
+      phone: profileData.phone.trim(),
+      location: profileData.location.trim(),
+      website: profileData.website.trim(),
+      bio: profileData.bio.trim(),
+    });
+
+    setProfileData((previous) => ({
+      ...previous,
+      fullName: `${firstName} ${lastName}`.trim(),
+      email,
+    }));
 
     setSaveSuccess(true);
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       setSaveSuccess(false);
     }, 3000);
-  } catch (error) {
-    console.error(
-      'Failed to save notification preferences:',
-      error
-    );
+  } catch (error: unknown) {
+    console.error("Failed to update profile:", error);
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Failed to update profile. Please try again.";
+
+    setProfileError(message);
+  } finally {
+    setProfileLoading(false);
   }
 };
 
+  // ============================================================
+  // PROFILE - CANCEL
+  // ============================================================
+
+  const handleCancelProfile = () => {
+    if (!user) {
+      return;
+    }
+
+    setProfileData({
+      fullName:
+        `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+      username: user.username || "",
+      email: user.email || "",
+      phone: "",
+      bio: user.bio || "",
+      location: "",
+      website: "",
+    });
+
+    setProfileError("");
+    setSaveSuccess(false);
+  };
+
+  // ============================================================
+  // PASSWORD UPDATE
+  // ============================================================
+
+  const handlePasswordUpdate = async (
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
+
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (
+      !currentPassword ||
+      !newPassword ||
+      !confirmPassword
+    ) {
+      setPasswordError(
+        "Please fill in all password fields."
+      );
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError(
+        "New password and confirmation do not match."
+      );
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setPasswordError(
+        "The new password must be different from your current password."
+      );
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    try {
+      const response = await authService.updatePassword(
+        currentPassword,
+        newPassword
+      );
+
+      setPasswordSuccess(
+        response?.message ||
+          "Password updated successfully."
+      );
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+
+      window.setTimeout(() => {
+        setPasswordSuccess("");
+      }, 4000);
+    } catch (error: unknown) {
+      console.error(
+        "Failed to update password:",
+        error
+      );
+
+      let message =
+        "Failed to update password. Please try again.";
+
+      const errorBody =
+        typeof error === "object" &&
+        error !== null &&
+        "body" in error
+          ? (
+              error as {
+                body?: {
+                  detail?: string | string[];
+                };
+              }
+            ).body
+          : undefined;
+
+      if (errorBody?.detail) {
+        if (Array.isArray(errorBody.detail)) {
+          message = errorBody.detail.join(" ");
+        } else {
+          message = String(errorBody.detail);
+        }
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
+      setPasswordError(message);
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  // ============================================================
+  // NOTIFICATIONS - SAVE
+  // ============================================================
+
+  const handleSaveNotifications = () => {
+    try {
+      localStorage.setItem(
+        NOTIFICATIONS_STORAGE_KEY,
+        JSON.stringify(notifications)
+      );
+
+      setSaveSuccess(true);
+
+      window.setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error(
+        "Failed to save notification preferences:",
+        error
+      );
+    }
+  };
+
+  // ============================================================
+  // RENDER
+  // ============================================================
 
   return (
     <div className="settings-wrapper">
+      {/* ======================================================
+          SUCCESS TOAST
+      ====================================================== */}
 
-      {/* Success Toast */}
       {saveSuccess && (
         <div className="toast-notification">
           <svg
@@ -214,7 +364,10 @@ const handleSaveNotifications = () => {
         </div>
       )}
 
-      {/* Header */}
+      {/* ======================================================
+          HEADER
+      ====================================================== */}
+
       <div className="settings-header">
         <div>
           <h1 className="settings-title">
@@ -222,23 +375,25 @@ const handleSaveNotifications = () => {
           </h1>
 
           <p className="settings-subtitle">
-            Manage your personal information, security and preferences.
+            Manage your personal information, security and
+            preferences.
           </p>
         </div>
       </div>
 
       <div className="settings-container">
+        {/* ====================================================
+            SIDEBAR
+        ==================================================== */}
 
-        {/* Sidebar Navigation */}
         <nav className="settings-sidebar">
-
           {/* Profile */}
           <button
             type="button"
             className={`sidebar-tab ${
-              activeTab === 'profile' ? 'active' : ''
+              activeTab === "profile" ? "active" : ""
             }`}
-            onClick={() => setActiveTab('profile')}
+            onClick={() => setActiveTab("profile")}
           >
             <svg
               className="tab-icon"
@@ -260,9 +415,9 @@ const handleSaveNotifications = () => {
           <button
             type="button"
             className={`sidebar-tab ${
-              activeTab === 'security' ? 'active' : ''
+              activeTab === "security" ? "active" : ""
             }`}
-            onClick={() => setActiveTab('security')}
+            onClick={() => setActiveTab("security")}
           >
             <svg
               className="tab-icon"
@@ -292,9 +447,11 @@ const handleSaveNotifications = () => {
           <button
             type="button"
             className={`sidebar-tab ${
-              activeTab === 'notifications' ? 'active' : ''
+              activeTab === "notifications"
+                ? "active"
+                : ""
             }`}
-            onClick={() => setActiveTab('notifications')}
+            onClick={() => setActiveTab("notifications")}
           >
             <svg
               className="tab-icon"
@@ -316,9 +473,9 @@ const handleSaveNotifications = () => {
           <button
             type="button"
             className={`sidebar-tab ${
-              activeTab === 'billing' ? 'active' : ''
+              activeTab === "billing" ? "active" : ""
             }`}
-            onClick={() => setActiveTab('billing')}
+            onClick={() => setActiveTab("billing")}
           >
             <svg
               className="tab-icon"
@@ -348,18 +505,19 @@ const handleSaveNotifications = () => {
 
             Billing & Plan
           </button>
-
         </nav>
 
-        {/* Main Content */}
+        {/* ====================================================
+            MAIN CONTENT
+        ==================================================== */}
+
         <main className="settings-content">
-
-          {/* =====================================================
+          {/* ==================================================
               PROFILE TAB
-          ===================================================== */}
-          {activeTab === 'profile' && (
-            <div className="settings-pane">
+          ================================================== */}
 
+          {activeTab === "profile" && (
+            <div className="settings-pane">
               <div className="pane-header">
                 <div>
                   <h2 className="pane-title">
@@ -367,45 +525,46 @@ const handleSaveNotifications = () => {
                   </h2>
 
                   <p className="pane-description">
-                    Update your public information and contact details.
+                    Update your public information and contact
+                    details.
                   </p>
                 </div>
               </div>
 
-              {/* Avatar Section */}
+              {/* Avatar */}
               <div className="avatar-section">
-
                 <div className="avatar-wrapper">
-
                   <div className="avatar-large">
                     {user
-                      ? `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase()
-                      : 'U'}
+                      ? `${user.firstName?.charAt(0) || ""}${
+                          user.lastName?.charAt(0) || ""
+                        }`.toUpperCase()
+                      : "U"}
                   </div>
 
                   <button
                     type="button"
                     className="avatar-edit-badge"
-                    title="Change profile picture"
+                    title="Profile picture upload is not available yet"
+                    disabled
                   >
                     📷
                   </button>
-
                 </div>
 
                 <div className="avatar-info">
-
                   <h4>Profile Picture</h4>
 
                   <p>
-                    JPG, GIF or PNG. Maximum size of 2MB.
+                    Profile picture upload will be available
+                    in a future version.
                   </p>
 
                   <div className="avatar-btn-group">
-
                     <button
                       type="button"
                       className="btn btn-secondary btn-sm"
+                      disabled
                     >
                       Update
                     </button>
@@ -413,14 +572,12 @@ const handleSaveNotifications = () => {
                     <button
                       type="button"
                       className="btn btn-ghost btn-sm text-danger"
+                      disabled
                     >
                       Remove
                     </button>
-
                   </div>
-
                 </div>
-
               </div>
 
               {/* Profile Form */}
@@ -428,12 +585,15 @@ const handleSaveNotifications = () => {
                 className="settings-form"
                 onSubmit={handleSave}
               >
+                {profileError && (
+                  <div className="password-message password-error">
+                    {profileError}
+                  </div>
+                )}
 
                 {/* Full Name / Username */}
                 <div className="form-grid">
-
                   <div className="form-group">
-
                     <label>Full Name</label>
 
                     <input
@@ -446,15 +606,12 @@ const handleSaveNotifications = () => {
                         })
                       }
                     />
-
                   </div>
 
                   <div className="form-group">
-
                     <label>Username</label>
 
                     <div className="input-prefix-wrapper">
-
                       <span className="input-prefix">
                         @
                       </span>
@@ -464,22 +621,17 @@ const handleSaveNotifications = () => {
                         value={profileData.username}
                         disabled
                       />
-
                     </div>
 
                     <span className="field-hint">
                       Your username cannot be changed.
                     </span>
-
                   </div>
-
                 </div>
 
                 {/* Email / Phone */}
                 <div className="form-grid">
-
                   <div className="form-group">
-
                     <label>Email Address</label>
 
                     <input
@@ -492,34 +644,34 @@ const handleSaveNotifications = () => {
                         })
                       }
                     />
-
                   </div>
 
-                  <div className="form-group">
 
+                  <div className="form-group">
                     <label>Phone Number</label>
 
-                    <input
-                      type="text"
-                      value={profileData.phone}
-                      onChange={(e) =>
+                      <input
+                       type="tel"
+                       value={profileData.phone}
+                       onChange={(e) =>
                         setProfileData({
-                          ...profileData,
-                          phone: e.target.value,
+                         ...profileData,
+                         phone: e.target.value,
                         })
-                      }
-                    />
+                       }
+                       placeholder="+213 ..."
+                      />
 
+                     <span className="field-hint">
+                        Your phone number is optional.
+                     </span>
                   </div>
-
                 </div>
 
+
                 {/* Location / Website */}
-                <div className="form-grid">
-
-                  <div className="form-group">
-
-                    <label>Location</label>
+                <div className="form-group">
+                  <label>Location</label>
 
                     <input
                       type="text"
@@ -530,16 +682,20 @@ const handleSaveNotifications = () => {
                           location: e.target.value,
                         })
                       }
+                      placeholder="Algiers, Algeria"
                     />
 
-                  </div>
+                     <span className="field-hint">
+                         Your location is optional.
+                     </span>
+                </div>
+
 
                   <div className="form-group">
-
-                    <label>Website / Portfolio</label>
+                   <label>Website / Portfolio</label>
 
                     <input
-                      type="text"
+                      type="url"
                       value={profileData.website}
                       onChange={(e) =>
                         setProfileData({
@@ -547,40 +703,43 @@ const handleSaveNotifications = () => {
                           website: e.target.value,
                         })
                       }
+                      placeholder="https://yourwebsite.com"
                     />
 
+                      <span className="field-hint">
+                        Add your personal website or portfolio.
+                      </span>
                   </div>
 
-                </div>
 
                 {/* Bio */}
                 <div className="form-group">
+                 <label>Bio / About</label>
 
-                  <label>Bio / About</label>
-
-                  <textarea
-                    rows={4}
+                   <textarea
                     value={profileData.bio}
                     onChange={(e) =>
-                      setProfileData({
+                       setProfileData({
                         ...profileData,
                         bio: e.target.value,
-                      })
+                       })
                     }
-                  />
+                   placeholder="Tell us about yourself..."
+                   rows={5}
+                   />
 
-                  <span className="field-hint">
-                    Briefly describe your role or your needs on the platform.
-                  </span>
-
+                    <span className="field-hint">
+                       Introduce yourself and describe your experience.
+                    </span>
                 </div>
 
                 {/* Actions */}
                 <div className="form-footer">
-
                   <button
                     type="button"
                     className="btn btn-ghost"
+                    onClick={handleCancelProfile}
+                    disabled={profileLoading}
                   >
                     Cancel
                   </button>
@@ -588,37 +747,34 @@ const handleSaveNotifications = () => {
                   <button
                     type="submit"
                     className="btn btn-primary"
+                    disabled={profileLoading}
                   >
-                    Save Changes
+                    {profileLoading
+                      ? "Saving..."
+                      : "Save Changes"}
                   </button>
-
                 </div>
-
               </form>
-
             </div>
           )}
 
-          {/* =====================================================
+          {/* ==================================================
               SECURITY TAB
-          ===================================================== */}
-          {activeTab === 'security' && (
+          ================================================== */}
+
+          {activeTab === "security" && (
             <div className="settings-pane">
-
               <div className="pane-header">
-
                 <div>
-
                   <h2 className="pane-title">
                     Account Security
                   </h2>
 
                   <p className="pane-description">
-                    Manage your password and enable additional security protections.
+                    Manage your password and enable additional
+                    security protections.
                   </p>
-
                 </div>
-
               </div>
 
               {/* Password Form */}
@@ -626,15 +782,12 @@ const handleSaveNotifications = () => {
                 className="settings-form"
                 onSubmit={handlePasswordUpdate}
               >
-
-                {/* Error Message */}
                 {passwordError && (
                   <div className="password-message password-error">
                     {passwordError}
                   </div>
                 )}
 
-                {/* Success Message */}
                 {passwordSuccess && (
                   <div className="password-message password-success">
                     {passwordSuccess}
@@ -643,13 +796,15 @@ const handleSaveNotifications = () => {
 
                 {/* Current Password */}
                 <div className="form-group">
-
                   <label>Current Password</label>
 
                   <div className="password-input-wrapper">
-
                     <input
-                      type={showCurrentPassword ? 'text' : 'password'}
+                      type={
+                        showCurrentPassword
+                          ? "text"
+                          : "password"
+                      }
                       value={currentPassword}
                       onChange={(e) =>
                         setCurrentPassword(e.target.value)
@@ -662,32 +817,35 @@ const handleSaveNotifications = () => {
                       type="button"
                       className="password-toggle"
                       onClick={() =>
-                        setShowCurrentPassword(!showCurrentPassword)
+                        setShowCurrentPassword(
+                          !showCurrentPassword
+                        )
                       }
                       title={
                         showCurrentPassword
-                          ? 'Hide password'
-                          : 'Show password'
+                          ? "Hide password"
+                          : "Show password"
                       }
                     >
-                      {showCurrentPassword ? '🙈' : '👁️'}
+                      {showCurrentPassword
+                        ? "🙈"
+                        : "👁️"}
                     </button>
-
                   </div>
-
                 </div>
 
                 {/* New Password / Confirm Password */}
                 <div className="form-grid">
-
                   <div className="form-group">
-
                     <label>New Password</label>
 
                     <div className="password-input-wrapper">
-
                       <input
-                        type={showNewPassword ? 'text' : 'password'}
+                        type={
+                          showNewPassword
+                            ? "text"
+                            : "password"
+                        }
                         value={newPassword}
                         onChange={(e) =>
                           setNewPassword(e.target.value)
@@ -700,29 +858,33 @@ const handleSaveNotifications = () => {
                         type="button"
                         className="password-toggle"
                         onClick={() =>
-                          setShowNewPassword(!showNewPassword)
+                          setShowNewPassword(
+                            !showNewPassword
+                          )
                         }
                         title={
                           showNewPassword
-                            ? 'Hide password'
-                            : 'Show password'
+                            ? "Hide password"
+                            : "Show password"
                         }
                       >
-                        {showNewPassword ? '🙈' : '👁️'}
+                        {showNewPassword
+                          ? "🙈"
+                          : "👁️"}
                       </button>
-
                     </div>
-
                   </div>
 
                   <div className="form-group">
-
                     <label>Confirm Password</label>
 
                     <div className="password-input-wrapper">
-
                       <input
-                        type={showConfirmPassword ? 'text' : 'password'}
+                        type={
+                          showConfirmPassword
+                            ? "text"
+                            : "password"
+                        }
                         value={confirmPassword}
                         onChange={(e) =>
                           setConfirmPassword(e.target.value)
@@ -735,369 +897,324 @@ const handleSaveNotifications = () => {
                         type="button"
                         className="password-toggle"
                         onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
+                          setShowConfirmPassword(
+                            !showConfirmPassword
+                          )
                         }
                         title={
                           showConfirmPassword
-                            ? 'Hide password'
-                            : 'Show password'
+                            ? "Hide password"
+                            : "Show password"
                         }
                       >
-                        {showConfirmPassword ? '🙈' : '👁️'}
+                        {showConfirmPassword
+                          ? "🙈"
+                          : "👁️"}
                       </button>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div className="form-footer">
-
                   <button
                     type="submit"
                     className="btn btn-primary"
                     disabled={passwordLoading}
                   >
                     {passwordLoading
-                      ? 'Updating...'
-                      : 'Update Password'}
+                      ? "Updating..."
+                      : "Update Password"}
                   </button>
-
                 </div>
-
               </form>
 
               <hr className="divider" />
 
               {/* 2FA */}
               <div className="security-card">
-
                 <div className="security-card-info">
-
                   <h4>
                     Two-Factor Authentication (2FA)
                   </h4>
 
                   <p>
-                    Add an extra layer of security to your account using an authentication app such as Google Authenticator.
+                    Add an extra layer of security to your
+                    account using an authentication app such
+                    as Google Authenticator.
                   </p>
-
                 </div>
 
                 <button
                   type="button"
                   className="btn btn-secondary"
+                  disabled
+                  title="2FA is not implemented yet"
                 >
                   Enable 2FA
                 </button>
-
               </div>
 
               <hr className="divider" />
 
               {/* Danger Zone */}
               <div className="danger-zone-box">
-
                 <div className="danger-zone-header">
-
-                  <h4>
-                    Danger Zone
-                  </h4>
+                  <h4>Danger Zone</h4>
 
                   <p>
-                    Deleting your account is permanent and will result in the loss of all your data.
+                    Account deletion is not available yet.
                   </p>
-
                 </div>
 
                 <button
                   type="button"
                   className="btn btn-danger"
+                  disabled
+                  title="Account deletion is not implemented yet"
                 >
                   Delete Account
                 </button>
-
               </div>
-
             </div>
           )}
 
-          {/* =====================================================
+          {/* ==================================================
               NOTIFICATIONS TAB
-          ===================================================== */}
-          {activeTab === 'notifications' && (
+          ================================================== */}
+
+          {activeTab === "notifications" && (
             <div className="settings-pane">
-
               <div className="pane-header">
-
                 <div>
-
                   <h2 className="pane-title">
                     Notification Preferences
                   </h2>
 
                   <p className="pane-description">
-                    Choose which notifications you would like to receive.
+                    Choose which notification preferences you
+                    would like to save.
                   </p>
-
                 </div>
-
               </div>
 
               <div className="toggle-list">
-
                 {/* Direct Messages */}
                 <div className="toggle-item">
-
                   <div className="toggle-info">
-
-                    <strong>
-                      Direct Messages
-                    </strong>
+                    <strong>Direct Messages</strong>
 
                     <p>
-                      Receive an email notification when someone sends you a message.
+                      Save your preference for message
+                      notifications.
                     </p>
-
                   </div>
 
                   <label className="switch">
-
                     <input
                       type="checkbox"
-                      checked={notifications.emailMessages}
+                      checked={
+                        notifications.emailMessages
+                      }
                       onChange={(e) =>
                         setNotifications({
                           ...notifications,
-                          emailMessages: e.target.checked,
+                          emailMessages:
+                            e.target.checked,
                         })
                       }
                     />
 
                     <span className="slider"></span>
-
                   </label>
-
                 </div>
 
                 {/* Project Updates */}
                 <div className="toggle-item">
-
                   <div className="toggle-info">
-
-                    <strong>
-                      Project Updates
-                    </strong>
+                    <strong>Project Updates</strong>
 
                     <p>
-                      Receive updates about your published projects and proposals.
+                      Save your preference for project and
+                      proposal notifications.
                     </p>
-
                   </div>
 
                   <label className="switch">
-
                     <input
                       type="checkbox"
-                      checked={notifications.emailProjects}
+                      checked={
+                        notifications.emailProjects
+                      }
                       onChange={(e) =>
                         setNotifications({
                           ...notifications,
-                          emailProjects: e.target.checked,
+                          emailProjects:
+                            e.target.checked,
                         })
                       }
                     />
 
                     <span className="slider"></span>
-
                   </label>
-
                 </div>
 
                 {/* Browser Notifications */}
                 <div className="toggle-item">
-
                   <div className="toggle-info">
-
                     <strong>
                       Browser Notifications
                     </strong>
 
                     <p>
-                      Show real-time alerts in your browser when you are connected.
+                      Save your browser alert preference.
                     </p>
-
                   </div>
 
                   <label className="switch">
-
                     <input
                       type="checkbox"
-                      checked={notifications.browserAlerts}
+                      checked={
+                        notifications.browserAlerts
+                      }
                       onChange={(e) =>
                         setNotifications({
                           ...notifications,
-                          browserAlerts: e.target.checked,
+                          browserAlerts:
+                            e.target.checked,
                         })
                       }
                     />
 
                     <span className="slider"></span>
-
                   </label>
-
                 </div>
 
                 {/* Offers & News */}
                 <div className="toggle-item">
-
                   <div className="toggle-info">
-
-                    <strong>
-                      Offers & News
-                    </strong>
+                    <strong>Offers & News</strong>
 
                     <p>
-                      Receive our monthly newsletter and tips to improve your projects.
+                      Save your preference for marketing
+                      emails and news.
                     </p>
-
                   </div>
 
                   <label className="switch">
-
                     <input
                       type="checkbox"
-                      checked={notifications.emailMarketing}
+                      checked={
+                        notifications.emailMarketing
+                      }
                       onChange={(e) =>
                         setNotifications({
                           ...notifications,
-                          emailMarketing: e.target.checked,
+                          emailMarketing:
+                            e.target.checked,
                         })
                       }
                     />
 
                     <span className="slider"></span>
-
                   </label>
-
                 </div>
-
               </div>
 
               <div className="form-footer">
-
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={handleSaveNotifications}
                 >
-                    Save Preferences
+                  Save Preferences
                 </button>
-
-
               </div>
-
             </div>
           )}
 
-          {/* =====================================================
+          {/* ==================================================
               BILLING TAB
-          ===================================================== */}
-          {activeTab === 'billing' && (
+          ================================================== */}
+
+          {activeTab === "billing" && (
             <div className="settings-pane">
-
               <div className="pane-header">
-
                 <div>
-
                   <h2 className="pane-title">
                     Billing & Subscription
                   </h2>
 
                   <p className="pane-description">
-                    Manage your payment methods and subscription plans.
+                    Manage your payment methods and
+                    subscription plans.
                   </p>
-
                 </div>
-
               </div>
 
               {/* Current Plan */}
               <div className="plan-banner">
-
                 <div className="plan-banner-content">
-
                   <span className="plan-chip">
                     CURRENT PLAN
                   </span>
 
-                  <h3>
-                    Free Account
-                  </h3>
+                  <h3>Free Account</h3>
 
                   <p>
-                    Standard access to publish projects and contact freelancers.
+                    Standard access to publish projects and
+                    contact freelancers.
                   </p>
-
                 </div>
 
                 <button
                   type="button"
                   className="btn btn-primary"
+                  disabled
+                  title="Billing and upgrades are not implemented yet"
                 >
                   Upgrade to PRO
                 </button>
-
               </div>
 
               {/* Payment Methods */}
               <div className="section-block">
-
                 <h3 className="section-block-title">
                   Payment Methods
                 </h3>
 
                 <div className="payment-card">
-
                   <div className="payment-card-left">
-
                     <div className="card-brand-icon">
                       💳
                     </div>
 
                     <div>
-
                       <strong>
-                        Visa ending in 4242
+                        Payment methods unavailable
                       </strong>
 
                       <p>
-                        Expires 12/28
+                        Billing integration has not been
+                        implemented yet.
                       </p>
-
                     </div>
-
                   </div>
 
                   <span className="badge-default">
-                    Default
+                    Free
                   </span>
-
                 </div>
 
                 <button
                   type="button"
                   className="btn btn-secondary btn-sm mt-12"
+                  disabled
                 >
                   + Add Payment Method
                 </button>
-
               </div>
-
             </div>
           )}
-
         </main>
       </div>
     </div>

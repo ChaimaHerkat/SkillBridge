@@ -84,21 +84,34 @@ const Dashboard: React.FC = () => {
       project.status === "completed"
   );
 
-  /* Number of proposals submitted */
-  const applicationCount = proposals.length;
+  
 
-  /* Accepted proposals */
-  const acceptedProposals = proposals.filter(
-    (proposal) =>
-      proposal.status?.toLowerCase() === "accepted"
-  );
+ 
 
-  /* Total value of accepted proposals */
-  const freelancerEarnings = acceptedProposals.reduce(
-    (total, proposal) =>
-      total + Number(proposal.proposed_budget || 0),
-    0
-  );
+
+  /* Proposals submitted by the current freelancer */
+const freelancerProposals = proposals.filter(
+  (proposal) =>
+    String(proposal.freelancer) === String(user.id)
+);
+
+/* Number of proposals submitted */
+const applicationCount = freelancerProposals.length;
+
+/* Accepted proposals */
+const acceptedProposals = freelancerProposals.filter(
+  (proposal) =>
+    proposal.status?.toLowerCase() === "accepted"
+);
+
+/* Total value of accepted proposals */
+const freelancerEarnings = acceptedProposals.reduce(
+  (total, proposal) =>
+    total + Number(proposal.proposed_budget || 0),
+  0
+);
+
+
 
   /* =====================================================
      CLIENT STATISTICS

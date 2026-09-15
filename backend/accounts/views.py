@@ -34,6 +34,23 @@ def _generate_jwt_for_user(user: User) -> str:
     return token
 
 
+
+def _user_data(user: User) -> dict:
+    return {
+        "id": user.id,
+        "username": user.username,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "email": user.email,
+        "role": user.role,
+        "phone": user.phone,
+        "location": user.location,
+        "website": user.website,
+        "bio": user.bio,
+    }
+    
+    
+
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
@@ -46,14 +63,7 @@ class RegisterView(APIView):
             return Response(
                 {
                     "message": "User created successfully",
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                        "firstName": user.firstName,
-                        "lastName": user.lastName,
-                        "email": user.email,
-                        "role": user.role,
-                    },
+                    "user": _user_data(user),
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -116,16 +126,8 @@ class MeView(APIView):
     def get(self, request):
         user = request.user
 
-        return Response(
-            {
-                "id": user.id,
-                "username": user.username,
-                "firstName": user.firstName,
-                "lastName": user.lastName,
-                "email": user.email,
-                "role": user.role,
-            }
-        )
+        return Response(_user_data(user))
+
 
 
 class UpdateProfileView(APIView):
@@ -192,3 +194,5 @@ class UpdatePasswordView(APIView):
             {"message": "Password updated successfully."},
             status=status.HTTP_200_OK,
         )
+
+
