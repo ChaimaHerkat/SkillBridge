@@ -34,7 +34,6 @@ def _generate_jwt_for_user(user: User) -> str:
     return token
 
 
-
 def _user_data(user: User) -> dict:
     return {
         "id": user.id,
@@ -48,8 +47,7 @@ def _user_data(user: User) -> dict:
         "website": user.website,
         "bio": user.bio,
     }
-    
-    
+
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -129,7 +127,6 @@ class MeView(APIView):
         return Response(_user_data(user))
 
 
-
 class UpdateProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -194,5 +191,3 @@ class UpdatePasswordView(APIView):
             {"message": "Password updated successfully."},
             status=status.HTTP_200_OK,
         )
-
-

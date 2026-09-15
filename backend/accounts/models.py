@@ -15,8 +15,8 @@ class User(AbstractUser):
         max_length=20,
         choices=Role.choices,
         default=Role.CLIENT,
-            )
-    
+    )
+
     phone = models.CharField(max_length=30, blank=True, default="")
     location = models.CharField(max_length=150, blank=True, default="")
     website = models.URLField(blank=True, default="")
